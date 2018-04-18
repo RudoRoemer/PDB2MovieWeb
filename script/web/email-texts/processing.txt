@@ -1,6 +1,6 @@
-Your request for a PDB2Movie calculation has now started execution.
+Your request for a PDB2Movie calculation has now started execution. You will receive a final email notification with a download link once the job has finished.
 
-Your parameters are as appended.
+Your parameters are again appended below.
 
 Please note that this service uses low priority compute cycles at the Scientific Computing Research Technology Platform 
 at the University of Warwick. The service is provided for free at the moment based on a low volume of such requests. 
