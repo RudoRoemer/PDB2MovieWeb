@@ -1,0 +1,6 @@
+auth/
+cgi-bin/
+config.conf
+*~
+*.swp
+*.swo

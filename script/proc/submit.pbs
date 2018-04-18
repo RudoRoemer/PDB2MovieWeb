@@ -1,0 +1,108 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
+#PBS -V
+#PBS -k oe
+#PBS -j oe
+#PBS -N ${NAME}
+
+name=${NAME}
+pyName=${PYNAME}
+res=${RES}
+waters=${WATERS}
+combi=${COMBI}
+multiple=${MULTIPLE}
+threed=${THREED}
+confs=${CONFS}
+freq=${FREQ}
+step=${STEP}
+dstep=${DSTEP}
+email=${EMAIL}
+molList=${MOLLIST}
+modList=${MODLIST}
+cutList=${CUTLIST}
+PWD=${LOC}
+PWD1=$(dirname $PWD)
+REMOTESCRIPT=${PWD1}
+REMOTESCRIPT=$SCRIPTLOC/web
+TMP="$PWD/pdb_tmp"
+DEST="$PWD/pdb_des"
+EXECSRC="$PWD/pdb2movie"
+purename=$(sed 's/.\{4\}$//' <<< "$name")
+webServerUser=pdb2movie
+webServerLoc=advem.lnx.warwick.ac.uk
+
+#if values are empty or false booleans, do not include in command line
+if [ $waters -eq 1 ] ; then
+	sWaters="--waters "
+fi
+if [ $combi -eq 1 ] ; then
+	sCombi="--combi "
+fi
+if [ $multiple -eq 1 ] ; then
+	sMulti="--multiple "
+fi
+if [ $threed -eq 1 ] ; then
+	sThreed="--threed "
+fi
+if [ -n "$confs" ]; then
+	sConfs="--confs $confs "
+fi
+if [ -n "$freq" ]; then
+	sFreq="--freq $freq "
+fi
+if [ -n "$step" ]; then
+	sStep="--step $step "
+fi
+if [ -n "$dstep" ]; then
+	sDStep="--dstep $dstep "
+fi
+if [ "$molList" != "NULL" ]; then
+	sMolList="--keep $molList"
+fi
+if [ "$modList" != "NULL" ]; then
+        sModList="--modes $modList "
+fi
+if [ "$cutList" != "NULL" ]; then
+	sCutList="--ecuts $cutList "
+fi
+if [ -n "$pyName" ]; then
+	sPyName="--video $TMP/$pyName "
+fi
+
+com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res '$res' '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' '$sModList' '$sMolList' '$sCutList' '$sPyName
+
+#write params to log
+echo "NAME="$name
+echo "RES="$res
+echo "WATERS="$waters
+echo "COMBI"$combi
+echo "MULTIPLE="$multiple
+echo "THREED="$threed
+echo "CONFS="$confs
+echo "FREQ="$freq
+echo "STEP="$step
+echo "DSTEP="$dstep
+echo "EMAIL="$email
+echo "MOLLIST="$molList
+echo "MODLIST="$modList
+echo "CUTLIST="$cutList  
+echo "PWD="$PWD
+echo "TMP="$TMP
+echo "DEST="$DEST
+echo "EXC="$EXECSRC
+echo "PURENAME="$purename
+echo "COM="$com
+echo "PYNAME="$pyName
+
+#if [ ! -d $TMP/$purename/ ]; then
+ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your request is being processed."'
+eval $com
+cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
+#tar -czvf $DEST/$purename.tar.gz $TMP/$purename/Run-*
+if [ $? -eq 0 ]; then
+	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
+	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your file is ready to download at https://advem.lnx.warwick.ac.uk/download/'$purename'.tar.gz"; /var/www/html/removeFinishedTask.sh '$purename'' 
+else
+	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Whilst processing your request, there was an error when rendering the video. This may be caused by an improper video file (optional), please ensure this file is formatted correctly.. "; /var/www/html/removeFinishedTask.sh '$purename''
+fi
+#fi

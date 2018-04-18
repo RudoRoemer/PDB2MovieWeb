@@ -1,0 +1,5 @@
+download/
+config.conf
+*~
+*.swp
+*.swo

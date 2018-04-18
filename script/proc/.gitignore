@@ -1,0 +1,7 @@
+*
+!.gitignore
+!garbageCollection.sh
+!submit.pbs
+!pdb2movie/
+!pdb_des/
+!pdb_tmp/
