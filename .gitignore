@@ -1,6 +1,7 @@
 auth/
 cgi-bin/
 config.conf
+.ftpconfig
 *~
 *.swp
 *.swo
