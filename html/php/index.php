@@ -1,6 +1,6 @@
 <?php
 
-	if (!$configs = parse_ini_file("../../config1.conf")) {
+	if (!$configs = parse_ini_file("../../config.conf")) {
 		endOp(jsonFormat("Failure","Cnfiguration error", "Could not load config file on web server."));
 	}
 
@@ -87,8 +87,10 @@
 	$remote_host_fp = $configs["remoteHostFingerPrint"];
 	$user = $configs["remoteUser"];
 	$location = $configs["remoteDirectory"];
+	$remoteScripts = $configs["remoteScripts"];
 	$public_key = $configs["sshPublic"];
 	$private_key = $configs["sshPrivate"];
+	$localScripts = $configs["localScripts"];
 
 	$ssh_error = "SSH command failed. Error on the processing server side.";
 
@@ -113,11 +115,11 @@
 	$rawname = rtrim($name, '.pdb');
 	//echo $newLoc . "\n";
 	//echo "/storage/disqs/" . $user . "/pdb_tmp/" . $name . "\n";
-	if (!(ssh2_scp_send($conn_ssh, $newLoc, $location . "/pdb_tmp/" . $name ))) {
+	if (!(ssh2_scp_send($conn_ssh, $newLoc, $remoteScripts . "/pdb_tmp/" . $name ))) {
 		endOp(jsonFormat("Failure", "Something has gone wrong","Error uploading pdb file to processing server."));
 	}
 	if ($pyFileUsed) {
-		if (!(ssh2_scp_send($conn_ssh, $newLocPyth, $location . "/pdb_tmp/" . $pyName ))) {
+		if (!(ssh2_scp_send($conn_ssh, $newLocPyth, $remoteScripts . "/pdb_tmp/" . $pyName ))) {
 			endOp(jsonFormat("Failure", "Something has gone wrong","Error uploading python file to processing server. newLocPyth: " . $newLocPyth . " fullLoc: " . $location . $user . "/pdb_tmp/" . $pyName));
 		}
 	}
@@ -132,11 +134,11 @@
                 $cutList = "NULL";
         }
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",USER="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
-	$location,
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$remoteScripts,
 	$name,
-	$location,
-	$user,
+	$remoteScripts,
+	$localScripts, //sdasdasdas
 	$name,
 	$res,
 	$waters,
@@ -152,7 +154,7 @@
 	$modList,
 	$cutList,
 	$pyName,
-	$location);
+	$remoteScripts);
 
 	//endOp("Request Sent. DB not connected stmt->getResult() undefined. requires more up-to-date PHP, will be sorted.");
 
@@ -235,7 +237,8 @@
                 } else {
 
                 	//'++currReqs' used to save processing time of requests from the database the updated version of current requests which, when this code section is ran, will only be the same value++
-                    endOp(jsonFormat("Success", "Thank You for Your Submission", "You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used " . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
+									//"You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used "
+									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
                 }
 
             } else {
