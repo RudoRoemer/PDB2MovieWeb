@@ -21,9 +21,7 @@ molList=${MOLLIST}
 modList=${MODLIST}
 cutList=${CUTLIST}
 PWD=${LOC}
-PWD1=$(dirname $PWD)
-REMOTESCRIPT=${PWD1}
-REMOTESCRIPT=$SCRIPTLOC/web
+REMOTESCRIPT=${RETDIR}
 TMP="$PWD/pdb_tmp"
 DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
@@ -87,6 +85,7 @@ echo "MOLLIST="$molList
 echo "MODLIST="$modList
 echo "CUTLIST="$cutList  
 echo "PWD="$PWD
+echo "REMOTESCRIPT="$REMOTESCRIPT
 echo "TMP="$TMP
 echo "DEST="$DEST
 echo "EXC="$EXECSRC
@@ -95,13 +94,17 @@ echo "COM="$com
 echo "PYNAME="$pyName
 
 #if [ ! -d $TMP/$purename/ ]; then
-ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your request is being processed."'
+
+ssh $webServerUser@$webServerLoc "'$REMOTESCRIPT'/mailer.sh '$email' 'pdb2movie: Your Request' 'Your request is being processed.'"
+echo "VI="$VI
+eval $VI
 eval $com
 cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
 #tar -czvf $DEST/$purename.tar.gz $TMP/$purename/Run-*
 if [ $? -eq 0 ]; then
 	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
-	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your file is ready to download at https://advem.lnx.warwick.ac.uk/download/'$purename'.tar.gz"; /var/www/html/removeFinishedTask.sh '$purename'' 
+	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your file is ready to download at https://advem.lnx.warwick.ac.uk/download/'$purename'.tar.gz"; '$REMOTESCRIPT'/removeFinishedTask.sh '$purename'' 
+	echo $VII
 else
 	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Whilst processing your request, there was an error when rendering the video. This may be caused by an improper video file (optional), please ensure this file is formatted correctly.. "; /var/www/html/removeFinishedTask.sh '$purename''
 fi
