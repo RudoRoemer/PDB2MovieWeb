@@ -11,7 +11,7 @@
         }
     }
 
-    function RegisterCapcha() {
+    function RegisterCaptcha() {
         $("#captcha").html(''); //reset the generated captcha first
         $("#captchaText").val('');
         $("#careersForm").clientSideCaptcha({
@@ -115,10 +115,8 @@ function check() {
 
 
 var form = document.querySelector("form");
-
 var subRes;
 form.addEventListener("submit", function (e) {
-
   // Prevents the standard submit event
 	e.preventDefault();
 
@@ -132,15 +130,17 @@ form.addEventListener("submit", function (e) {
 	$.each(params, function(key, value){
 	  fData.append(key, value);
 	})
-
 	$.ajax({
-    url: window.location.pathname + "php/index.php",
-	type: 'POST',
+    url: "/php/index.php",
+	  type: 'POST',
     data: fData,
     async: true,
     success: function (data) {
-    	console.log(data);
+    	console.log("DATA: " + data);
     	subRes = JSON.parse(data);
+    },
+    error: function (data) {
+      console.log("OHNO");
     },
     cache: false,
     contentType: false,
@@ -167,7 +167,7 @@ $(document).ready(function () {
             $("#tos").prop("disabled", false);
             $('.FadeOnSubmit').fadeOut();
             var newHeight = parseInt($('#main').height()) - (parseInt($("#titleHeightRef").height()) + parseInt($("#toSend").height()));
-			$("#main").animate({height:newHeight});
+	          $("#main").animate({height:newHeight});
             var toAdd = "<div id='responseHeightRef'><h2>" + subRes.title +"</h2>" + subRes.text + "<p></p></div>";
             setTimeout(function() {
                 $(toAdd).hide().appendTo("#main").fadeIn();
