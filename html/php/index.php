@@ -68,11 +68,13 @@
 	//script would have ended if any value is not sanitized, good to send.
 	$name = ltrim($newLoc, $configs["localDirectory"] . "/php/pdb_tmp/");
 	$pyName = ltrim($newLocPyth, $configs["localDirectory"] . "/php/pdb_tmp/");
+	$origName = $_FILES['pdbFile']['name'];
 	$res = $_POST["res"];
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
 	$multiple =($_POST["multiple"] === "true" ? 1 : 0);
 	$threed =($_POST["threed"] === "true" ? 1 : 0);
+	$fileKeep = ( $_POST["fileKeep"] === "true" ? 1 : 0);
 	$confs = $_POST["confs"];
 	$freq = $_POST["freq"];
 	$step = $_POST["step"];
@@ -167,7 +169,7 @@
 
 	}
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST-"%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s".ORIGNAME=%s,PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -178,6 +180,7 @@
 	$combi,
 	$multiple,
 	$threed,
+	$fileKeep,
 	$confs,
 	$freq,
 	$step,
@@ -188,11 +191,11 @@
 	$cutList,
 	$rand,
 	$thisServer,
+	$origName,
 	$pyName,
 	$remoteScripts);
 
-	echo "\n" . $qsub_cmd . "\n";
-
+	//echo "\n" . $qsub_cmd . "\n";
 	//while ($row = $sqlRes->fetch_assoc()) {
 	//	print($row["email"]);
 	//}
@@ -232,14 +235,14 @@
             $stmt->bind_param("s", $userID);
 
             $stmt2 = $conn_sql->stmt_init();
-            $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)");
-            $stmt2->bind_param("sisiiiiiiddsssi", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID);
+            $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
+            $stmt2->bind_param("sisiiiiiiddsssi", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
 
             if ($stmt->execute() && $stmt2->execute()) {
 								if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
                     endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
                 } else {
-									$args = sprintf("(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+									$args = sprintf("%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
 																	"unnamed.pdb",
 																	"N/a",
 																	$res,
@@ -256,7 +259,7 @@
 																	$cutList,
 																	date()
 									);
-									exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: New Request Accepted.' accepted.txt " . $args);
+									exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args);
                 	//'++currReqs' used to save processing time of requests from the database the updated version of current requests which, when this code section is ran, will only be the same value++
 									//"You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used "
 									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));

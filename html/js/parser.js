@@ -42,6 +42,7 @@ function check() {
 	multiple = $("#multiple").prop("checked");
 	waters = $("#waters").prop("checked");
 	threed = $("#threed").prop("checked");
+  fileKeep = $("#fileKeep").prop("checked");
 	res = "1920 1080";
 	confs = parseInt($("#confs").val());
 	freq = parseInt($("#freq").val());
@@ -99,6 +100,7 @@ function check() {
 		"multiple"	: multiple,
 		"waters"	: waters,
 		"threed"	: threed,
+    "fileKeep" : fileKeep,
 		"confs"		: confs,
 		"freq"		: freq,
 		"step"		: step,
