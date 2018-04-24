@@ -1,4 +1,3 @@
-#!/bin/bash
 #PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
 #PBS -V
 #PBS -k oe
@@ -6,7 +5,11 @@
 #PBS -N ${NAME}
 
 name=${NAME}
+oldFileName="1bpi"
+code=${CODE}
+time="NOTAVAILABLE"
 pyName=${PYNAME}
+pyTrue="0"
 res=${RES}
 waters=${WATERS}
 combi=${COMBI}
@@ -22,6 +25,7 @@ modList=${MODLIST}
 cutList=${CUTLIST}
 PWD=${LOC}
 REMOTESCRIPT=${RETDIR}
+CODE=${CODE}
 TMP="$PWD/pdb_tmp"
 DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
@@ -68,8 +72,8 @@ if [ -n "$pyName" ]; then
 fi
 
 com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res '$res' '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' '$sModList' '$sMolList' '$sCutList' '$sPyName
+args=''$oldFileName' '$pyTrue' '$res' '$combi' '$multiple' '$threed' '$confs' '$freq' '$step' '$dstep' '$molList' '$modList' '$cutList' '$time' '$code''
 
-#write params to log
 echo "NAME="$name
 echo "RES="$res
 echo "WATERS="$waters
@@ -83,7 +87,7 @@ echo "DSTEP="$dstep
 echo "EMAIL="$email
 echo "MOLLIST="$molList
 echo "MODLIST="$modList
-echo "CUTLIST="$cutList  
+echo "CUTLIST="$cutList
 echo "PWD="$PWD
 echo "REMOTESCRIPT="$REMOTESCRIPT
 echo "TMP="$TMP
@@ -92,20 +96,19 @@ echo "EXC="$EXECSRC
 echo "PURENAME="$purename
 echo "COM="$com
 echo "PYNAME="$pyName
+echo "ARGS="$args
 
-#if [ ! -d $TMP/$purename/ ]; then
-
-ssh $webServerUser@$webServerLoc "'$REMOTESCRIPT'/mailer.sh '$email' 'pdb2movie: Your Request' 'Your request is being processed.'"
-echo "VI="$VI
-eval $VI
+ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' accepted.txt NULL $args"
 eval $com
 cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
-#tar -czvf $DEST/$purename.tar.gz $TMP/$purename/Run-*
+
 if [ $? -eq 0 ]; then
+	
 	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
-	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your file is ready to download at https://advem.lnx.warwick.ac.uk/download/'$purename'.tar.gz"; '$REMOTESCRIPT'/removeFinishedTask.sh '$purename'' 
-	echo $VII
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename.tar.gz $args"
+	
 else
-	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Whilst processing your request, there was an error when rendering the video. This may be caused by an improper video file (optional), please ensure this file is formatted correctly.. "; /var/www/html/removeFinishedTask.sh '$purename''
+
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt  $args"
+
 fi
-#fi
