@@ -81,6 +81,7 @@
 	$molList = $_POST["molList"];
 	$modList = $_POST["modList"];
 	$cutList = $_POST["cutList"];
+	$rand = mt_rand(100000, 999999);
 
 	$conn_ssh;
 	$remote_host = $configs["remoteHost"];
@@ -177,8 +178,8 @@
 
 	if (!$row) {
         $stmt = $conn_sql->stmt_init();
-        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted) VALUES (?, 3, NULL, 0, 0);");
-        $stmt->bind_param("s", $email);
+        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
+        $stmt->bind_param("s", $email, $rand);
         $stmt->execute();
 
         $userID = mysqli_stmt_insert_id($stmt);
@@ -224,7 +225,7 @@
 		if (is_null($complete) || $complete == 1) {
 
             $stmt = $conn_sql->stmt_init();
-            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
+            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 1	 WHERE user_id=?");
             $stmt->bind_param("s", $userID);
 
             $stmt2 = $conn_sql->stmt_init();

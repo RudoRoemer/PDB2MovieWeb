@@ -14,131 +14,48 @@
 		</div>
 		<div class="jumbotron">
 		  <div id="header">
-		  	PDB2Movie (c) 2018 [ALPHA version]
+		  	PDB2Movie (c) 2018 [&alpha; version]
 		  </div>
 		  <div id="text">
-			  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris gravida vel justo eget auctor.
+			  Web-based front- and backend for PDB2Movie scripts
 		  </div>
 		</div>
+		<nav class="navbar navbar-expand-sm bg-light navbar-light">
+		  <ul class="navbar-nav">
+		    <li class="nav-item active">
+		      <a class="nav-link" href="index.html">Home</a>
+		    </li>
+		    <li class="nav-item">
+		      <a class="nav-link" href="submit.html">Submit Job</a>
+		    </li>
+		    <li class="nav-item">
+		      <a class="nav-link" href="review.html">Review Job</a>
+		    </li>
+		    <li class="nav-item">
+		      <a class="nav-link" href="about.html">About</a>
+		    </li>
+				<li class="nav-item">
+		      <a class="nav-link" href="terms-of-service.html">Terms of Service</a>
+		    </li>
+		  </ul>
+		</nav>
 		<div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
-			<h2 style="padding-top: 10px;">Intro</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris gravida vel justo eget auctor. Ut bibendum ac mi iaculis vulputate. Cras mattis, ligula eu faucibus ullamcorper, mauris arcu efficitur lacus, ac suscipit massa odio quis massa. Sed lobortis molestie tortor quis iaculis. Sed aliquam ligula in libero hendrerit luctus. Donec volutpat congue dolor, id pharetra eros ornare nec. In sed justo eleifend, bibendum velit eget, rhoncus eros. Ut vel bibendum dolor, eget iaculis metus. Pellentesque mollis mauris id dignissim iaculis. Cras vel mattis nunc, sed aliquet enim. Etiam sit amet viverra ipsum, interdum ultricies lacus. Fusce vitae turpis iaculis, congue purus tristique, euismod nunc. Ut sem est, vestibulum id pretium sit amet, convallis non augue. Donec faucibus vulputate aliquet. Sed aliquam vitae libero sit amet tempor.
-			<h2 class="FadeOnSubmit" id="titleHeightRef">Submit a PDB File and Parameters</h2>
-			<div class="container-fluid">
-				<form action="php/index.php" method="post" id="toSend" class="FadeOnSubmit">
-			    Select PDB File:
-					<input type="file" name="pdbFile" id="pdbFile" accept=".pdb" style="display: block;"></input>
-			    	<p style="margin-top: 20px;">
-			    (Optional) Select a file containing python video formatting statements:
-			    	<input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block">
-					<p style="margin-top: 20px">
-			    Resolution:
-					<label class="radio-inline"><input type="radio" name="optradio" id="res1080" checked="true">1920x1080</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio" id="res720">1280x720</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio" id="res480">640×480</input></label>
-					<div class="row">
-			    		<div class="col-sm-6 col-md-6 col-lg-6">
-			    			<div class="checkbox">
-					      		<label><input type="checkbox" value="" id="combi"> Combine positive and negative directions into a single video.</label>
-					    	</div>
-			    		</div>
-			    		<div class="col-sm-6 col-md-6 col-lg-6">
-			    			Number of configurations to be calculated:
-				  			<input style="display: inline; float: right; width: 100px" value="2000" type="number" class="form-control" id="confs">
-						</div>
-					</div>
-				<div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-					    	<label><input type="checkbox" value="" id="multiple"> Keep multiple chains from PDB file (default only uses chain A).</label>
-					  	</div>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Frequences of saving intermediate configuration:
-						<input style="display: inline; float: right; width: 100px" value="100" type="number" class="form-control" id="freq">
-				  		<p>
-			    	</div>
-			    </div>
-			    <div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-							<label><input type="checkbox" value="" id="waters"> Keep water molecules from the PDB file.</label>
-					    </div>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Size of random step:
-				  		<input style="display: inline; float: right; width: 100px" type="number" class="form-control" step="0.00001" value="0.1" id="step">
-				  		<p>
-			    	</div>
-			    </div>
-			    <div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<label><input type="checkbox" value="" id="threed"> Render video in anaglyph stereo (3D).</label>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Size of direct step:
-				  		<input style="display: inline; float: right; width: 100px" value="0.01" type="number" class="form-control" step="0.00001" id="dstep">
-				  		<p>
-			    	</div>
-			    </div>
-			  	<p>
-			  	<div class="container">
-			  		<div class="container">
-			  			<p>Molecules to keep:
-			  			<button
-			  				type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-keep"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="list the molecules that you wish to keep in the structure&#013;&#013;Format ex: CZA NE2 NH1&#013;&#013;(Default none)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list">
-			  		</div>
-			  		<div class="container">
-			  			<p>Movement modes to investigate:
-			  			<button type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-modes"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="select the modes you wish to process&#013;&#013;Format ex: 12 13 14 &#013;&#013;(Default 7 8 9 10 11)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" value="7" style="width:70%; float:right; display: inline-block;" class="form-control" id="modes-list">
-			  		</div>
-			  		<div class="container">
-			  			<p>Energy cutoff Values:
-			  				<button type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-cutoffs"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="select energy cutoff values you wish to calculate&#013;&#013;Format ex: 1.0 2.0 3.0 4.0 &#013;&#013;(Default 1.0 2.0)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" value="2.0" style="width:70%; float:right; display: inline-block;" class="form-control" id="cutoff-list">
-			  		</div>
-			  	</div>
-				  <div class="form-group">
-						<label for="usr">email address:</label>
-						<input type="text" class="form-control" id="email">
-					</div>
-					<p>
-					<div class="checkbox">
-			    	<label><input type="checkbox" value="" id="tos" onclick="tosClick()"> I agree to the <a href="tos.html">Terms of Service</a>, acknowledging that I am using this for purely academic purposes. </label>
-			  	</div>
-			  	<img>
-					<input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
-					<img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
-					<p></p>
-				</form>
-			</div>
+
+			<h2 style="padding-top: 10px;">Welcome</h2>
+			<p>Protein function frequently involves conformational changes with large amplitude on timescales which are difficult and computationally expensive to access using molecular dynamics. In this project, we combine three computationally inexpensive simulation methods, (i) normal mode analysis using the elastic network model, (ii) rigidity analysis using the pebble game algorithm, and (iii) geometric simulation of protein motion, to explore conformational change along normal mode eigenvectors.</p>
+
+			<p>If you use the results of this calculation in a commercial and/or academic output (such as a patent or a paper), please remember to acknowledge our two papers:</p>
+
+			<ul>
+			<li>"Rapid simulation of protein motion: merging flexibility, rigidity and normal mode analyses", E. Jimenez-Roldan, R. Freedman, R. A. Römer, S. A. Wells, Physical Biology 9, 016008-12 (2012), <a href="http://dx.doi.org/doi:10.1088/1478-3975/9/1/016008">http://dx.doi.org/doi:10.1088/1478-3975/9/1/016008</a></li>
+
+			<li>"The dynamics and flexibility of protein disulphide-isomerase (PDI): predictions of experimentally-observed domain motions", R. A. Römer, S. A. Wells, J. E. Jimenez-Roldan, M. Bhattacharyya, S. Vishweshwara and R. B. Freedman, Proteins: Structure, Function and Bioinformatics 84, 1776-1785 (2016), <a href="http://dx.doi.org/10.1002/prot.25159">http://dx.doi.org/10.1002/prot.25159</a></li>
+			</ul>
+
+			<p>This service uses low priority compute cycles at the <a href="https://warwick.ac.uk/research/rtp/sc">Scientific Computing Research Technology Platform</a> of the <a href="https://warwick.ac.uk/">University of Warwick</a>. The service is provided for free at the moment based on a low volume of such requests.</p>
+
+			<p>If you wish to use the service more often, please get in touch.</p>
+
 		</div>
 	</body>
-	<script src="js/parser.js"></script>
 </html>`
