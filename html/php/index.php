@@ -90,6 +90,7 @@
 	$public_key = $configs["sshPublic"];
 	$private_key = $configs["sshPrivate"];
 	$localScripts = $configs["localScripts"];
+	$thisServer = $configs["localHost"];
 
 	$ssh_error = "SSH command failed. Error on the processing server side.";
 
@@ -166,7 +167,7 @@
 
 	}
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST-"%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -186,6 +187,7 @@
 	$modList,
 	$cutList,
 	$rand,
+	$thisServer,
 	$pyName,
 	$remoteScripts);
 

@@ -31,7 +31,7 @@ DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
 purename=$(sed 's/.\{4\}$//' <<< "$name")
 webServerUser=pdb2movie
-webServerLoc=advem.lnx.warwick.ac.uk
+webServerLoc=${LOCALHOST}
 
 #if values are empty or false booleans, do not include in command line
 if [ $waters -eq 1 ] ; then
@@ -103,10 +103,10 @@ eval $com
 cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
 
 if [ $? -eq 0 ]; then
-	
+
 	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename.tar.gz $args"
-	
+
 else
 
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt  $args"
