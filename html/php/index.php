@@ -81,8 +81,6 @@
 	$molList = $_POST["molList"];
 	$modList = $_POST["modList"];
 	$cutList = $_POST["cutList"];
-	$rand = mt_rand(100000, 999999);
-
 	$conn_ssh;
 	$remote_host = $configs["remoteHost"];
 	$remote_host_fp = $configs["remoteHostFingerPrint"];
@@ -135,7 +133,40 @@
                 $cutList = "NULL";
         }
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	//endOp("Request Sent. DB not connected stmt->getResult() undefined. requires more up-to-date PHP, will be sorted.");
+
+	$sqlServer = $configs["sqlServer"];
+	$sqlUser = $configs["sqlUser"];
+	$sqlPass = $configs["sqlPassword"];
+	$sqlDB = $configs["sqlDB"];
+
+	//if connection fails, stop script
+	$conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
+
+	$stmt = $conn_sql->stmt_init();
+  $stmt = $conn_sql->prepare("SELECT user_id, secret_code FROM Users WHERE email=?;");
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+	$sqlRes = $stmt->get_result();
+	$row = $sqlRes->fetch_assoc();
+
+	if (!$row) {
+				$rand = mt_rand(100000, 999999);
+				$stmt = $conn_sql->stmt_init();
+        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
+        $stmt->bind_param("s", $email, $rand);
+        $stmt->execute();
+
+        $userID = mysqli_stmt_insert_id($stmt);
+
+	} else {
+
+		$userID = $row["user_id"];
+		$rand = $row["secret_code"];
+
+	}
+
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -154,41 +185,11 @@
 	$molList,
 	$modList,
 	$cutList,
+	$rand,
 	$pyName,
 	$remoteScripts);
 
-	//endOp("Request Sent. DB not connected stmt->getResult() undefined. requires more up-to-date PHP, will be sorted.");
-
-	$sqlServer = $configs["sqlServer"];
-	$sqlUser = $configs["sqlUser"];
-	$sqlPass = $configs["sqlPassword"];
-	$sqlDB = $configs["sqlDB"];
-
-	//if connection fails, stop script
-	$conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
-
-	$getID = "SELECT user_id FROM Users WHERE email=?;";
-
-	$stmt = $conn_sql->stmt_init();
-  $stmt = $conn_sql->prepare($getID);
-  $stmt->bind_param("s", $email);
-  $stmt->execute();
-	$sqlRes = $stmt->get_result();
-	$row = $sqlRes->fetch_assoc();
-
-	if (!$row) {
-        $stmt = $conn_sql->stmt_init();
-        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
-        $stmt->bind_param("s", $email, $rand);
-        $stmt->execute();
-
-        $userID = mysqli_stmt_insert_id($stmt);
-
-	} else {
-
-		$userID = $row["user_id"];
-
-	}
+	echo "\n" . $qsub_cmd . "\n";
 
 	//while ($row = $sqlRes->fetch_assoc()) {
 	//	print($row["email"]);
@@ -215,7 +216,7 @@
 	$maxReqs = $fetch["max_requests"];
 
 	$stmt = $conn_sql->stmt_init();
-	$stmt = $conn_sql->prepare("SELECT complete FROM Requests WHERE filename=? AND python_used=? AND resolution=? AND combi=? AND multi=? AND waters=? AND threed=? AND confs=? AND freq=? AND step=? AND dstep=? AND molList=? AND modList=? AND cutList=?");
+	$stmt = $conn_sql->prepare("SELECT complete FROM Requests WHERE filename=? AND python_used=? AND resolution=? AND combi=? AND multi=? AND waters=? AND threed=? AND confs=? AND freq=? AND step=? AND dstep=? AND molList=? AND modList=? AND cutList=? ORDER BY req_id DESC LIMIT 1");
 	$stmt->bind_param("sisiiiiiiddsss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList);
 	$stmt->execute();
 	$fetchRes = $stmt->get_result();
@@ -225,7 +226,7 @@
 		if (is_null($complete) || $complete == 1) {
 
             $stmt = $conn_sql->stmt_init();
-            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 1	 WHERE user_id=?");
+            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
             $stmt->bind_param("s", $userID);
 
             $stmt2 = $conn_sql->stmt_init();
@@ -236,7 +237,24 @@
 								if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
                     endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
                 } else {
-
+									$args = sprintf("(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+																	"unnamed.pdb",
+																	"N/a",
+																	$res,
+																	$combi,
+																	$multiple,
+																	$waters,
+																	$threed,
+																	$confs,
+																	$freq,
+																	$step,
+																	$dstep,
+																	$molList,
+																	$modList,
+																	$cutList,
+																	date()
+									);
+									exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: New Request Accepted.' accepted.txt " . $args);
                 	//'++currReqs' used to save processing time of requests from the database the updated version of current requests which, when this code section is ran, will only be the same value++
 									//"You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used "
 									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
