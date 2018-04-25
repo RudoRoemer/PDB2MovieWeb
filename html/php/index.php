@@ -68,11 +68,13 @@
 	//script would have ended if any value is not sanitized, good to send.
 	$name = ltrim($newLoc, $configs["localDirectory"] . "/php/pdb_tmp/");
 	$pyName = ltrim($newLocPyth, $configs["localDirectory"] . "/php/pdb_tmp/");
+	$origName = $_FILES['pdbFile']['name'];
 	$res = $_POST["res"];
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
 	$multiple =($_POST["multiple"] === "true" ? 1 : 0);
 	$threed =($_POST["threed"] === "true" ? 1 : 0);
+	$fileKeep = ( $_POST["fileKeep"] === "true" ? 1 : 0);
 	$confs = $_POST["confs"];
 	$freq = $_POST["freq"];
 	$step = $_POST["step"];
@@ -81,8 +83,6 @@
 	$molList = $_POST["molList"];
 	$modList = $_POST["modList"];
 	$cutList = $_POST["cutList"];
-	$rand = mt_rand(100000, 999999);
-
 	$conn_ssh;
 	$remote_host = $configs["remoteHost"];
 	$remote_host_fp = $configs["remoteHostFingerPrint"];
@@ -92,6 +92,7 @@
 	$public_key = $configs["sshPublic"];
 	$private_key = $configs["sshPrivate"];
 	$localScripts = $configs["localScripts"];
+	$thisServer = $configs["localHost"];
 
 	$ssh_error = "SSH command failed. Error on the processing server side.";
 
@@ -135,28 +136,6 @@
                 $cutList = "NULL";
         }
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
-	$remoteScripts,
-	$name,
-	$remoteScripts,
-	$localScripts, //sdasdasdas
-	$name,
-	$res,
-	$waters,
-	$combi,
-	$multiple,
-	$threed,
-	$confs,
-	$freq,
-	$step,
-	$dstep,
-	$email,
-	$molList,
-	$modList,
-	$cutList,
-	$pyName,
-	$remoteScripts);
-
 	//endOp("Request Sent. DB not connected stmt->getResult() undefined. requires more up-to-date PHP, will be sorted.");
 
 	$sqlServer = $configs["sqlServer"];
@@ -167,17 +146,16 @@
 	//if connection fails, stop script
 	$conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
 
-	$getID = "SELECT user_id FROM Users WHERE email=?;";
-
 	$stmt = $conn_sql->stmt_init();
-  $stmt = $conn_sql->prepare($getID);
+  $stmt = $conn_sql->prepare("SELECT user_id, secret_code FROM Users WHERE email=?;");
   $stmt->bind_param("s", $email);
   $stmt->execute();
 	$sqlRes = $stmt->get_result();
 	$row = $sqlRes->fetch_assoc();
 
 	if (!$row) {
-        $stmt = $conn_sql->stmt_init();
+				$rand = mt_rand(100000, 999999);
+				$stmt = $conn_sql->stmt_init();
         $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
         $stmt->bind_param("s", $email, $rand);
         $stmt->execute();
@@ -187,9 +165,37 @@
 	} else {
 
 		$userID = $row["user_id"];
+		$rand = $row["secret_code"];
 
 	}
 
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s".ORIGNAME=%s,PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$remoteScripts,
+	$name,
+	$remoteScripts,
+	$localScripts, //sdasdasdas
+	$name,
+	$res,
+	$waters,
+	$combi,
+	$multiple,
+	$threed,
+	$fileKeep,
+	$confs,
+	$freq,
+	$step,
+	$dstep,
+	$email,
+	$molList,
+	$modList,
+	$cutList,
+	$rand,
+	$thisServer,
+	$origName,
+	$pyName,
+	$remoteScripts);
+
+	//echo "\n" . $qsub_cmd . "\n";
 	//while ($row = $sqlRes->fetch_assoc()) {
 	//	print($row["email"]);
 	//}
@@ -215,7 +221,7 @@
 	$maxReqs = $fetch["max_requests"];
 
 	$stmt = $conn_sql->stmt_init();
-	$stmt = $conn_sql->prepare("SELECT complete FROM Requests WHERE filename=? AND python_used=? AND resolution=? AND combi=? AND multi=? AND waters=? AND threed=? AND confs=? AND freq=? AND step=? AND dstep=? AND molList=? AND modList=? AND cutList=?");
+	$stmt = $conn_sql->prepare("SELECT complete FROM Requests WHERE filename=? AND python_used=? AND resolution=? AND combi=? AND multi=? AND waters=? AND threed=? AND confs=? AND freq=? AND step=? AND dstep=? AND molList=? AND modList=? AND cutList=? ORDER BY req_id DESC LIMIT 1");
 	$stmt->bind_param("sisiiiiiiddsss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList);
 	$stmt->execute();
 	$fetchRes = $stmt->get_result();
@@ -225,18 +231,35 @@
 		if (is_null($complete) || $complete == 1) {
 
             $stmt = $conn_sql->stmt_init();
-            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 1	 WHERE user_id=?");
+            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
             $stmt->bind_param("s", $userID);
 
             $stmt2 = $conn_sql->stmt_init();
-            $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)");
-            $stmt2->bind_param("sisiiiiiiddsssi", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID);
+            $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
+            $stmt2->bind_param("sisiiiiiiddsssi", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
 
             if ($stmt->execute() && $stmt2->execute()) {
 								if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
                     endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
                 } else {
-
+									$args = sprintf("%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+																	"unnamed.pdb",
+																	"N/a",
+																	$res,
+																	$combi,
+																	$multiple,
+																	$waters,
+																	$threed,
+																	$confs,
+																	$freq,
+																	$step,
+																	$dstep,
+																	$molList,
+																	$modList,
+																	$cutList,
+																	date()
+									);
+									exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args);
                 	//'++currReqs' used to save processing time of requests from the database the updated version of current requests which, when this code section is ran, will only be the same value++
 									//"You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used "
 									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));

@@ -5,7 +5,7 @@
 #PBS -N ${NAME}
 
 name=${NAME}
-oldFileName="1bpi"
+oldFileName=${ORIGNAME}
 code=${CODE}
 time="NOTAVAILABLE"
 pyName=${PYNAME}
@@ -15,6 +15,8 @@ waters=${WATERS}
 combi=${COMBI}
 multiple=${MULTIPLE}
 threed=${THREED}
+fileKeep=${FILEKEEP}
+isUnix=1
 confs=${CONFS}
 freq=${FREQ}
 step=${STEP}
@@ -31,7 +33,7 @@ DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
 purename=$(sed 's/.\{4\}$//' <<< "$name")
 webServerUser=pdb2movie
-webServerLoc=advem.lnx.warwick.ac.uk
+webServerLoc=${LOCALHOST}
 
 #if values are empty or false booleans, do not include in command line
 if [ $waters -eq 1 ] ; then
@@ -80,6 +82,7 @@ echo "WATERS="$waters
 echo "COMBI"$combi
 echo "MULTIPLE="$multiple
 echo "THREED="$threed
+echo "FILEKEEP="$fileKeep
 echo "CONFS="$confs
 echo "FREQ="$freq
 echo "STEP="$step
@@ -100,13 +103,37 @@ echo "ARGS="$args
 
 ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
 eval $com
-cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
+
+cd $TMP/$purename;
+if [ $isUnix = 1 ]; then
+
+	tar -cvf $purename.tar Run-*
+	if [ $fileKeep -eq 1 ]; then
+		tar -rf $purename.tar Runs/ Modes/
+	fi
+	gzip $purename.tar
+	mv $purename.tar.gz $DEST/ ;
+	SUFFIX='.tar.gz'
+
+else
+
+	if [ $fileKeep -eq 1 ]; then
+		find . | egrep Run\|Modes | zip -9 -y -r -q -@ $purename.zip
+	else
+		find . | egrep Run- | zip -9 -y -r -q -@ $purename.zip
+	fi
+	SUFFIX='.zip'
+
+fi
+cd -;
+rm -r $TMP/$purename
 
 if [ $? -eq 0 ]; then
-	
-	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename.tar.gz $args"
-	
+
+	scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
+	if [ $? -eq 1 ]; then rm $DEST/$purename$SUFFIX; fi
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/removeFinishedTask.sh $purename"
+
 else
 
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt  $args"
