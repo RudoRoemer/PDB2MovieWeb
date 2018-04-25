@@ -66,7 +66,7 @@ function check() {
 
 		return "One or more inputs are invalid." + freq + step + dstep;
 	}
-	if (regEx($("#mol-list").val(), "^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$")) {
+	if (regEx($("#mol-list").val(), "^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$")| true) {
 		molList = $("#mol-list").val();
 	} else if (!$("#mol-list").val() == "") {
 		return "Format of molecule list is incorrect.";
