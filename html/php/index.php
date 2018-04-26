@@ -37,6 +37,7 @@
 
 	//validates inputs, ends program if erroneous
                 //move file to tmp location.
+								
 	switch (false) {
 		case filter_var($_POST["confs"]				, FILTER_VALIDATE_INT);
 			endOp(jsonFormat("Failure", "Something has gone wrong","Invalid value in configuration parameter."));
@@ -63,12 +64,16 @@
 		endOp(jsonFormat("Failure", "Something has gone wrong","invalid BOOL"));
 	}
 
+	if (!preg_match('/^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$/', 	$_POST["molList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid keep list.")); }
+	if (!preg_match('/^(([0-9])([0-9]?)( ?))*$/', 						$_POST["modList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid mode list.")); }
+	if (!preg_match('/^([0-9].[0-9]+( ?))*$/',	 							$_POST["cutList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid cutoff list.")); }
+
 	$file=file_get_contents( $newLoc );
 
 	//script would have ended if any value is not sanitized, good to send.
 	$name = ltrim($newLoc, $configs["localDirectory"] . "/php/pdb_tmp/");
 	$pyName = ltrim($newLocPyth, $configs["localDirectory"] . "/php/pdb_tmp/");
-	$origName = $_FILES['pdbFile']['name'];
+	$origName = filter_var($_FILES['pdbFile']['name'], FILTER_SANITIZE_SPECIAL_CHARS);
 	$res = $_POST["res"];
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
@@ -169,7 +174,7 @@
 
 	}
 
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s".ORIGNAME=%s,PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -192,6 +197,7 @@
 	$rand,
 	$thisServer,
 	$origName,
+	date('d M y hh:mm:ss'),
 	$pyName,
 	$remoteScripts);
 
@@ -228,6 +234,7 @@
 	$complete = $fetchRes->fetch_assoc()["complete"];
 
 	if (($maxReqs > $currReqs)) {
+
 		if (is_null($complete) || $complete == 1) {
 
             $stmt = $conn_sql->stmt_init();
@@ -236,7 +243,7 @@
 
             $stmt2 = $conn_sql->stmt_init();
             $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
-            $stmt2->bind_param("sisiiiiiiddsssi", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
+            $stmt2->bind_param("sisiiiiiiddsssis", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
 
             if ($stmt->execute() && $stmt2->execute()) {
 								if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
@@ -257,20 +264,17 @@
 																	$molList,
 																	$modList,
 																	$cutList,
-																	date()
+																	date('d M y hh:mm:ss')
 									);
-									exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args);
-                	//'++currReqs' used to save processing time of requests from the database the updated version of current requests which, when this code section is ran, will only be the same value++
-									//"You will be sent an email to confirm when the order has begun processing and when your files are ready for download. You have used "
+									$viiiii = shell_exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args);
+									//var_dump($viiiii);
 									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
                 }
 
-            } else {
-                endOp(jsonFormat("Failure", "Something has gone wrong","There was an error adding your request to the queue: " . mysqli_stmt_error($stmt2)));
-            }
-		} else {
-			endOp(jsonFormat("Failure", "Something has gone wrong", "This requests is currently being processed. Please wait for this to be completed before requesting it again."));
-		}
+            } else { endOp(jsonFormat("Failure", "Something has gone wrong","There was an error adding your request to the queue: " . mysqli_stmt_error($stmt2))); }
+
+		} else { endOp(jsonFormat("Failure", "Something has gone wrong", "This requests is currently being processed. Please wait for this to be completed before requesting it again.")); }
+
 	} else {
 		$fff = jsonFormat("Failure", "Something has gone wrong","You have Reached your daily limit of " . $currReqs . "/" . $maxReqs . ". This will be reset at 00:00:00 GMT.");
 		endOp($fff);
