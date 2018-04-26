@@ -73,7 +73,7 @@ if [ -n "$pyName" ]; then
 	sPyName="--video $TMP/$pyName "
 fi
 
-com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res '$res' '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' '$sModList' '$sMolList' '$sCutList' '$sPyName
+com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res "'$res'" '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' "'$sModList'" "'$sMolList'" "'$sCutList'" '$sPyName
 args=''$oldFileName' '$pyTrue' '$res' '$combi' '$multiple' '$threed' '$confs' '$freq' '$step' '$dstep' '$molList' '$modList' '$cutList' '$time' '$code''
 
 echo "NAME="$name

@@ -1,3 +1,29 @@
+var subRes;
+
+function removeReq(entry) {
+
+	var fDataDel = new FormData();
+
+	fDataDel.append("filename", subRes[entry].filename);
+	fDataDel.append("reqID", subRes[entry].req_id);
+
+	$.ajax({
+		url: "/php/delete.php",
+	  type: 'POST',
+    data: fDataDel,
+    async: true,
+		success: function (data) {
+			console.log(data);
+		},
+		failure: function (data) {
+			console.log("NOPE");
+		},
+    cache: false,
+    contentType: false,
+    processData: false
+	});
+}
+
 var form = document.querySelector("form");
 
 form.addEventListener("submit", function (e) {
@@ -38,14 +64,13 @@ form.addEventListener("submit", function (e) {
     async: true,
     success: function (data) {
 			//console.log(data);
-    	var subRes = JSON.parse(data);
+    	subRes = JSON.parse(data);
 			$("#response-tables").empty();
 			for (i =0; i<subRes.length; i++) {
-				console.log(subRes[i].complete);
 				if (subRes[i].complete == 1) {
 					var fstLine = '<h2>' + subRes[i].original_name + ' - ' + subRes[i].filename + '</h2>';
 				} else {
-					var fstLine = '<h2 style="position: absolute">' + subRes[i].original_name + '</h2><button type="button" class="btn btn-dark" style="float: right;">Remove</button>';
+					var fstLine = '<h2 style="position: absolute">' + subRes[i].original_name + '</h2><button type="button" class="btn btn-dark" onClick="removeReq(' + i + ')" style="float: right;">Remove</button>';
 				}
 				$("#response-tables").append("" +
 					fstLine +

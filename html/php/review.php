@@ -1,7 +1,7 @@
 <?php
 
   if (!$configs = parse_ini_file("../../config.conf")) {
-    echo '{"status": "failure", "title": "Configuration error", "text": "Could not load config file on web server."}';
+    exit('{"status": "failure", "title": "Configuration error", "text": "Could not load config file on web server."}' );
   }
 
   $email = $_POST["email"];
@@ -15,7 +15,7 @@
   $conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
 
   $stmt = $conn_sql->stmt_init();
-  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete
+  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename
                               FROM Requests
                               INNER JOIN Users ON Requests.user_id = Users.user_id
                               WHERE Users.email=? AND Users.secret_code=?");
