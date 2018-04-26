@@ -132,7 +132,7 @@ if [ $? -eq 0 ]; then
 
 	scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
 	if [ $? -eq 1 ]; then rm $DEST/$purename$SUFFIX; fi
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/removeFinishedTask.sh $purename"
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 
 else
 

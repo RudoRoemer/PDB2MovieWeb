@@ -4,5 +4,5 @@ purename=$1
 processingUser="phsbqz"
 
 wholeEntry=$(qstat -a | grep $processingUser | grep ${purename::16} | sed 's/\.moo.*/.moo/')
-echo $wholeEntry
 qdel $wholeEntry
+qdel $?
