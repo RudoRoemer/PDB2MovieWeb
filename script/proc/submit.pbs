@@ -1,4 +1,3 @@
-#!/bin/bash
 #PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
 #PBS -V
 #PBS -k oe
@@ -6,12 +5,18 @@
 #PBS -N ${NAME}
 
 name=${NAME}
+oldFileName=${ORIGNAME}
+code=${CODE}
+time="NOTAVAILABLE"
 pyName=${PYNAME}
+pyTrue="0"
 res=${RES}
 waters=${WATERS}
 combi=${COMBI}
 multiple=${MULTIPLE}
 threed=${THREED}
+fileKeep=${FILEKEEP}
+isUnix=1
 confs=${CONFS}
 freq=${FREQ}
 step=${STEP}
@@ -22,12 +27,13 @@ modList=${MODLIST}
 cutList=${CUTLIST}
 PWD=${LOC}
 REMOTESCRIPT=${RETDIR}
+CODE=${CODE}
 TMP="$PWD/pdb_tmp"
 DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
 purename=$(sed 's/.\{4\}$//' <<< "$name")
 webServerUser=pdb2movie
-webServerLoc=advem.lnx.warwick.ac.uk
+webServerLoc=${LOCALHOST}
 
 #if values are empty or false booleans, do not include in command line
 if [ $waters -eq 1 ] ; then
@@ -67,15 +73,16 @@ if [ -n "$pyName" ]; then
 	sPyName="--video $TMP/$pyName "
 fi
 
-com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res '$res' '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' '$sModList' '$sMolList' '$sCutList' '$sPyName
+com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res "'$res'" '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' "'$sModList'" "'$sMolList'" "'$sCutList'" '$sPyName
+args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' $time $code"
 
-#write params to log
 echo "NAME="$name
 echo "RES="$res
 echo "WATERS="$waters
 echo "COMBI"$combi
 echo "MULTIPLE="$multiple
 echo "THREED="$threed
+echo "FILEKEEP="$fileKeep
 echo "CONFS="$confs
 echo "FREQ="$freq
 echo "STEP="$step
@@ -83,7 +90,7 @@ echo "DSTEP="$dstep
 echo "EMAIL="$email
 echo "MOLLIST="$molList
 echo "MODLIST="$modList
-echo "CUTLIST="$cutList  
+echo "CUTLIST="$cutList
 echo "PWD="$PWD
 echo "REMOTESCRIPT="$REMOTESCRIPT
 echo "TMP="$TMP
@@ -92,20 +99,43 @@ echo "EXC="$EXECSRC
 echo "PURENAME="$purename
 echo "COM="$com
 echo "PYNAME="$pyName
+echo "ARGS="$args
 
-#if [ ! -d $TMP/$purename/ ]; then
-
-ssh $webServerUser@$webServerLoc "'$REMOTESCRIPT'/mailer.sh '$email' 'pdb2movie: Your Request' 'Your request is being processed.'"
-echo "VI="$VI
-eval $VI
+ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
 eval $com
-cd $TMP/$purename; tar -czvf $purename.tar.gz Run-* && mv $purename.tar.gz $DEST/ ; cd -;
-#tar -czvf $DEST/$purename.tar.gz $TMP/$purename/Run-*
-if [ $? -eq 0 ]; then
-	scp -v $DEST/$purename.tar.gz $webServerUser@$webServerLoc:/var/www/html/download/
-	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Your file is ready to download at https://advem.lnx.warwick.ac.uk/download/'$purename'.tar.gz"; '$REMOTESCRIPT'/removeFinishedTask.sh '$purename'' 
-	echo $VII
+
+cd $TMP/$purename;
+if [ $isUnix = 1 ]; then
+
+	tar -cvf $purename.tar Run-*
+	if [ $fileKeep -eq 1 ]; then
+		tar -rf $purename.tar Runs/ Modes/
+	fi
+	gzip $purename.tar
+	mv $purename.tar.gz $DEST/ ;
+	SUFFIX='.tar.gz'
+
 else
-	ssh $webServerUser@$webServerLoc ''$REMOTESCRIPT'/mailer.sh '$email' "pdb2movie: Your Request" "Whilst processing your request, there was an error when rendering the video. This may be caused by an improper video file (optional), please ensure this file is formatted correctly.. "; /var/www/html/removeFinishedTask.sh '$purename''
+
+	if [ $fileKeep -eq 1 ]; then
+		find . | egrep Run\|Modes | zip -9 -y -r -q -@ $purename.zip
+	else
+		find . | egrep Run- | zip -9 -y -r -q -@ $purename.zip
+	fi
+	SUFFIX='.zip'
+
 fi
-#fi
+cd -;
+rm -r $TMP/$purename
+
+if [ $? -eq 0 ]; then
+
+	scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
+	if [ $? -eq 1 ]; then rm $DEST/$purename$SUFFIX; fi
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServerLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+
+else
+
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt  $args"
+
+fi
