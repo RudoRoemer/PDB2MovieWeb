@@ -30,7 +30,7 @@
     	$auth = ssh2_auth_pubkey_file($conn_ssh, $configs['remoteUser'], $configs['sshPublic'], $configs['sshPrivate']);
     	if (!$auth) {
         $this->res = '{"status": "failure", "title": "Something went wrong", "text": "Could not authenticate processing server."}';
-
+        return $this->res;
       }
 
       $this->res = $conn_ssh;

@@ -63,7 +63,7 @@ form.addEventListener("submit", function (e) {
     data: fData,
     async: true,
     success: function (data) {
-			//console.log(data);
+			console.log(data);
     	subRes = JSON.parse(data);
 			$("#response-tables").empty();
 			for (i =0; i<subRes.length; i++) {

@@ -10,7 +10,7 @@ for i in $@
 do
   args=(${args[@]} $i)
 done
-
+echo $args
 (
 echo "subject: "$msg
 mapfile -t toSend < email-texts/$doc
@@ -19,24 +19,25 @@ do
   echo $i
 done
 echo "-----"
-echo "file: " ${args[0]}
-echo "python file used: " ${args[1]}
-echo "resolution: " ${args[2]}
-echo "combi: " ${args[3]}
-echo "multi: " ${args[4]}
-echo "waters: " ${args[5]}
-echo "threed: " ${args[6]}
-echo "confs: " ${args[7]}
-echo "freq: " ${args[8]}
-echo "step: " ${args[9]}
-echo "dstep: " ${args[10]}
-echo "Keep list: " ${args[11]}
-echo "Modes: " ${args[12]}
-echo "Cutoffs: " ${args[13]}
-echo "Date Submitted: " ${args[14]}
+echo "file: " $1
+echo "python file used: " $2
+echo "resolution: " $3
+echo "combi: " $4
+echo "multi: " $5
+echo "waters: " $6
+echo "threed: " $7
+echo "confs: " $8
+echo "freq: " $9
+echo "step: " ${10}
+echo "dstep: " ${11}
+echo "Keep list: " ${12}
+echo "Modes: " ${13}
+echo "Cutoffs: " ${14}
+echo "Date Submitted: " ${15}
 echo "-----"
-echo "Your User Reference Code: " ${args[15]};
+echo "Your User Reference Code: " ${16};
 if [ $doc == "complete.txt" ]; then
   echo "Download Link: "$extra
 fi
 )| /usr/sbin/sendmail -i -- $email
+echo $?

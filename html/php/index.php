@@ -19,14 +19,16 @@
 
  	$pdbFile = new PdbChecker($sha1Final);
 	if ($pdbFile->didItPass() !== "Success"){
-    		endOp(jsonFormat("Failure", "Somethin has gone wrong", "The PDB file send did not pass authentication " . $pdbFile->didItPass())); //. $pdbFile->didItPass()));
+    endOp(jsonFormat("Failure", "Somethin has gone wrong", "The PDB file send did not pass authentication " . $pdbFile->didItPass())); //. $pdbFile->didItPass()));
 	}
 	$newLoc = $pdbFile->getTmpLocation();
 	$pyFileUsed = file_exists($_FILES['pyFile']['tmp_name']);
+	$pyToPass = 0;
 	if ($pyFileUsed) {
-        	$pyFile = new PythonChecker($sha1Final);
-        	if ($pyFile->didItPass() !== "Success"){
-            		endOp(jsonFormat("Failure", "Something has gone wrong", ".py file: " . $pyFile->didItPass()));
+		$pyToPass = 1;
+  	$pyFile = new PythonChecker($sha1Final);
+  	if ($pyFile->didItPass() !== "Success"){
+      endOp(jsonFormat("Failure", "Something has gone wrong", ".py file: " . $pyFile->didItPass()));
 		} else {
 			$newLocPyth = $pyFile->getTmpLocation();
 			move_uploaded_file($_FILES['pyFile']['tmp_name'], $pyFile->getTmpLocation());
@@ -37,7 +39,7 @@
 
 	//validates inputs, ends program if erroneous
                 //move file to tmp location.
-								
+
 	switch (false) {
 		case filter_var($_POST["confs"]				, FILTER_VALIDATE_INT);
 			endOp(jsonFormat("Failure", "Something has gone wrong","Invalid value in configuration parameter."));
@@ -117,7 +119,6 @@
 		endOp(jsonFormat("Failure", "Something has gone wrong","Authentication failure. Currently an issue with connecting to processing server, try again later."));
 	}
 
-
 	$output;
 	$rawname = rtrim($name, '.pdb');
 	//echo $newLoc . "\n";
@@ -174,6 +175,12 @@
 
 	}
 
+	$stmt = $conn_sql->prepare("SELECT secret_code FROM Users WHERE user_id=?");
+	$stmt->bind_param("s", $userID);
+	$stmt->execute();
+	$fetchRes = $stmt->get_result();
+	$sCode = $fetchRes->fetch_assoc()["secret_code"];
+
 	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
@@ -194,7 +201,7 @@
 	$molList,
 	$modList,
 	$cutList,
-	$rand,
+	$sCode,
 	$thisServer,
 	$origName,
 	date('d M y hh:mm:ss'),
@@ -237,41 +244,44 @@
 
 		if (is_null($complete) || $complete == 1) {
 
-            $stmt = $conn_sql->stmt_init();
-            $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
-            $stmt->bind_param("s", $userID);
+	    $stmt = $conn_sql->stmt_init();
+	    $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
+	    $stmt->bind_param("s", $userID);
 
-            $stmt2 = $conn_sql->stmt_init();
-            $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
-            $stmt2->bind_param("sisiiiiiiddsssis", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
+	    $stmt2 = $conn_sql->stmt_init();
+	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
+			$stmt2->bind_param("sisiiiiiiddsssis", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
 
-            if ($stmt->execute() && $stmt2->execute()) {
-								if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
-                    endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
-                } else {
-									$args = sprintf("%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
-																	"unnamed.pdb",
-																	"N/a",
-																	$res,
-																	$combi,
-																	$multiple,
-																	$waters,
-																	$threed,
-																	$confs,
-																	$freq,
-																	$step,
-																	$dstep,
-																	$molList,
-																	$modList,
-																	$cutList,
-																	date('d M y hh:mm:ss')
-									);
-									$viiiii = shell_exec("../../script/web/mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args);
-									//var_dump($viiiii);
-									endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
-                }
+			if ($stmt->execute() && $stmt2->execute()) {
+				if (!(ssh2_exec($conn_ssh, $qsub_cmd))) {
+	          endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
+	      } else {
 
-            } else { endOp(jsonFormat("Failure", "Something has gone wrong","There was an error adding your request to the queue: " . mysqli_stmt_error($stmt2))); }
+					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s",
+													$origName,
+													$pyToPass,
+													$res,
+													$combi,
+													$multiple,
+													$waters,
+													$threed,
+													$confs,
+													$freq,
+													$step,
+													$dstep,
+													$molList,
+													$modList,
+													$cutList,
+													date('d M y h:m:s'),
+													$sCode
+					);
+					echo "cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args . "; cd -";
+					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args . "; cd -") ;
+					endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
+
+				}
+
+      } else { endOp(jsonFormat("Failure", "Something has gone wrong","There was an error adding your request to the queue: " . mysqli_stmt_error($stmt2))); }
 
 		} else { endOp(jsonFormat("Failure", "Something has gone wrong", "This requests is currently being processed. Please wait for this to be completed before requesting it again.")); }
 
