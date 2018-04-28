@@ -1,168 +1,286 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8"/>
-		<title></title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-		<link rel="stylesheet" href="css/general.css">
-	</head>
-	<body>
-		<div class="header-image">
-		</div>
-		<div class="jumbotron">
-		  <div id="header">
-		  	PDB2Movie (c) 2018 [&alpha; version]
-		  </div>
-		  <div id="text">
-			  Web-based front- and backend for PDB2Movie scripts
-		  </div>
-		</div>
-		<nav class="navbar navbar-expand-sm bg-light navbar-light">
-		  <ul class="navbar-nav">
-		    <li class="nav-item">
-		      <a class="nav-link" href="index.html">Home</a>
-		    </li>
-		    <li class="nav-item active">
-		      <a class="nav-link" href="submit.html">Submit Job</a>
-		    </li>
-		    <li class="nav-item">
-		      <a class="nav-link" href="review.html">Review Job</a>
-		    </li>
-		    <li class="nav-item">
-		      <a class="nav-link" href="about.html">About</a>
-		    </li>
-				<!--<li class="nav-item">
-		      <a class="nav-link" href="terms-of-service.html">Terms of Service</a>
-		    </li>-->
-		  </ul>
-		</nav>
-		<div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
-			<h2 class="FadeOnSubmit" id="titleHeightRef" style="padding-top:10px">Submit a PDB file and simulation parameters</h2>
-			<div class="container-fluid">
-				<form action="php/index.php" method="post" id="toSend" class="FadeOnSubmit">
-			    Select PDB file:
-					<input type="file" name="pdbFile" id="pdbFile" accept=".pdb" style="display: block;"></input>
-			    	<p style="margin-top: 20px;">
-			    (Optional) Select a file containing python video formatting statements:
-			    	<input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block">
-<hr>
-					<p style="margin-top: 20px">
-			    Resolution:
-					<label class="radio-inline"><input type="radio" name="optradio" id="res1080" checked="true">1920x1080</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio" id="res720">1280x720</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio" id="res480">640×480</input></label>
+  <head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/general.css">
+  </head>
+  <body>
+    <div class="header-image">
+    </div>
+    <div class="jumbotron">
+      <div id="header">
+	PDB2Movie (c) 2018 [&alpha; version]
+      </div>
+      <div id="text">
+	Web-based front- and backend for PDB2Movie scripts
+      </div>
+    </div>
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+      <ul class="navbar-nav">
+	<li class="nav-item">
+	  <a class="nav-link" href="index.html">Home</a>
+	</li>
+	<li class="nav-item active">
+	  <a class="nav-link" href="submit.html">Submit Job</a>
+	</li>
+	<li class="nav-item">
+	  <a class="nav-link" href="review.html">Review Job</a>
+	</li>
+	<li class="nav-item">
+	  <a class="nav-link" href="about.html">About</a>
+	</li>
+	<!--<li class="nav-item">
+	    <a class="nav-link" href="terms-of-service.html">Terms of Service</a>
+	</li>-->
+      </ul>
+    </nav>
+    <div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
+      
+      <h2 class="FadeOnSubmit" id="titleHeightRef" style="padding-top:10px">Submission information</h2>
+      
+      <div class="container-fluid">
+	
+	<form action="php/index.php" method="post" id="toSend" class="FadeOnSubmit">
+	  
+	  <h4>Email address</h4>
+	  
+	  <div class="form-group">
+	    <label for="usr"><li>Please provide your email address for
+		sending you progress updates and final download
+		link</li></label>
+	    <input type="text" class="form-control" id="email">
+	  </div>
+	  
+	  <img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
+
+	  <h4>PDB file</h4>
+
+	  <li>Select and upload a protein data bank (PDB) file (.pdb
+	    format only). The file will be discarded after completion of
+	    your submission request.</li>
+	  <input type="file" name="pdbFile" id="pdbFile" accept=".pdb" style="display: block;"></input>
+	  
 	<hr>
-					<div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-					    	<label><input type="checkbox" value="" id="combi"> Combine positive and negative directions into a single video.</label>
-					    </div>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Number of configurations to be calculated:
-				  		<input style="display: inline; float: right; width: 100px" value="2000" type="number" class="form-control" id="confs">
-						</div>
-					</div>
-					<div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-					    	<label><input type="checkbox" value="" id="multiple"> Keep multiple chains from PDB file (default only uses chain A).</label>
-					  	</div>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Frequences of saving intermediate configuration:
-							<input style="display: inline; float: right; width: 100px" value="100" type="number" class="form-control" id="freq">
-				  		<p>
-			    	</div>
-			    </div>
-			    <div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-								<label><input type="checkbox" value="" id="waters"> Keep water molecules from the PDB file.</label>
-					    </div>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Size of random step:
-				  		<input style="display: inline; float: right; width: 100px" type="number" class="form-control" step="0.00001" value="0.1" id="step">
-				  		<p>
-			    	</div>
-			    </div>
-			    <div class="row">
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<label><input type="checkbox" value="" id="threed"> Render video in anaglyph stereo (3D).</label>
-			    	</div>
-			    	<div class="col-sm-6 col-md-6 col-lg-6">
-			    		Size of direct step:
-				  		<input style="display: inline; float: right; width: 100px" value="0.01" type="number" class="form-control" step="0.00001" id="dstep">
-				  		<p>
-			    	</div>
-			    </div>
-					<div class="row">
-						<div class="col-sm-6 col-md-6 col-lg-6">
-			    		<div class="checkbox">
-					    	<label><input type="checkbox" value="" id="fileKeep"> Download processed files (Large download).</label>
-					    </div>
-			    	</div>
-					</div>
-			  	<p>
-			  	<div class="container">
-			  		<div class="container">
-			  			<p>Molecules to keep:
-			  			<button
-			  				type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-keep"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="list the molecules that you wish to keep in the structure&#013;&#013;Format ex: CZA NE2 NH1&#013;&#013;(Default none)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list">
-			  		</div>
-			  		<div class="container">
-			  			<p>Movement modes to investigate:
-			  			<button type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-modes"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="select the modes you wish to process&#013;&#013;Format ex: 12 13 14 &#013;&#013;(Default 7 8 9 10 11)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" value="7" style="width:70%; float:right; display: inline-block;" class="form-control" id="modes-list">
-			  		</div>
-			  		<div class="container">
-			  			<p>Energy cutoff Values:
-			  				<button type="button"
-			  				class="btn btn-info btn-question"
-			  				id="popover-cutoffs"
-		  					data-toggle="tooltip"
-		  					data-placement="right"
-		  					data-html="true"
-		  					title="select energy cutoff values you wish to calculate&#013;&#013;Format ex: 1.0 2.0 3.0 4.0 &#013;&#013;(Default 1.0 2.0)">
-			  				<strong>I</strong>
-			  			</button>
-			  			<input type="text" value="2.0" style="width:70%; float:right; display: inline-block;" class="form-control" id="cutoff-list">
-			  		</div>
-			  	</div>
-				  <div class="form-group">
-						<label for="usr">email address:</label>
-						<input type="text" class="form-control" id="email">
-					</div>
-					<p>
-					<div class="checkbox">
-			    	<label><input type="checkbox" value="" id="tos" onclick="tosClick()"> I agree to the <a href="terms-of-service.html">Terms of Service</a>, acknowledging that I am using this for purely academic purposes. </label>
-			  	</div>
-					<input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
-					<img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
-					<p></p>
-				</form>
-			</div>
+
+	<h4>Simulation parameter</h4>
+
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>Number of conformers to be calculated for each mode.
+		<input style="display: inline; float: right; width: 100px" value="2000" type="number" class="form-control" id="confs"><br></li>
+	    </div>
+	  </div>
+
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>Step size after which intermediate conformers are saved as output.
+		<input style="display: inline; float: right; width: 100px" value="100" type="number" class="form-control" id="freq"><br></li>
+	    </div>
+	  </div>
+
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>Size of random intial step.
+		<input style="display: inline; float: right; width: 100px"
+		       type="number" class="form-control" step="0.00001"
+		       value="0.1" id="step"><br></li>
+	    </div>
+	  </div>
+	  
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>Size of direct step.
+		<input style="display: inline; float: right; width: 100px"
+		       value="0.01" type="number" class="form-control"
+		       step="0.00001" id="dstep"><br></li>
+	    </div>
+	  </div>
+
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>List of molecules to keep from being deleted by algorithm.
+		<button
+		  type="button" class="btn btn-info btn-question"
+		  id="popover-keep" data-toggle="tooltip"
+		  data-placement="right" data-html="true" title="format: CZA NE2
+		  NH1&#013;&#013;(Default none)">
+		  <strong>I</strong>
+		</button>
+		<input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list"></li>
+	    </div>
+	  </div>
+	      
+	    
+	    <div class="container">
+	      <p>List of flexibility modes to investigate:
+		<button type="button"
+			class="btn btn-info btn-question"
+			id="popover-modes" data-toggle="tooltip"
+			data-placement="right" data-html="true"
+			title="select the modes you wish to
+			process&#013;&#013;Format ex: 12 13 14
+			&#013;&#013;(Default 7 8 9 10 11)">
+		  <strong>I</strong>
+		</button>
+		<input type="text" value="7" style="width:70%; float:right; display: inline-block;" class="form-control" id="modes-list">
+	    </div>
+	    <div class="container">
+	      <p>Energy cutoff values:
+		<button type="button"
+			class="btn btn-info btn-question"
+			id="popover-cutoffs" data-toggle="tooltip"
+			data-placement="right" data-html="true"
+			title="select energy cutoff values you wish to
+			calculate&#013;&#013;Format ex: 1.0 2.0 3.0
+			4.0 &#013;&#013;(Default 1.0 2.0)">
+		  
+		  <strong>I</strong>
+		</button>
+		<input type="text" value="2.0" style="width:70%; float:right; display: inline-block;" class="form-control" id="cutoff-list">
+	    </div>
+	  
+	<hr>
+	  
+	<h4>Output preferences</h4>
+
+	<p style="margin-top: 20px;">
+	    (Optional) Select a file containing python video formatting statements:
+	    <input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block">
+
+
+
+	  <p style="margin-top: 20px">
+	      Resolution:
+	      <label class="radio-inline"><input type="radio" name="optradio" id="res1080" checked="true">1920x1080</input></label>
+	      <label class="radio-inline"><input type="radio" name="optradio" id="res720">1280x720</input></label>
+	      <label class="radio-inline"><input type="radio" name="optradio" id="res480">640×480</input></label>
+	      <hr>
+	      <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="" id="combi"> Combine positive and negative directions into a single video.</label>
+		  </div>
 		</div>
-	</body>
-	<script src="js/parser.js"></script>
+		
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  Number of configurations to be calculated:
+		  <input style="display: inline; float: right; width: 100px" value="2000" type="number" class="form-control" id="confs">
+		</div>
+	      </div>
+	      <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  <div class="checkbox">
+		    <label><input type="checkbox" value="" id="multiple"> Keep multiple chains from PDB file (default only uses chain A).</label>
+		  </div>
+		</div>
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  Frequences of saving intermediate configuration:
+		  <input style="display: inline; float: right; width: 100px" value="100" type="number" class="form-control" id="freq">
+		  <p>
+		</div>
+	      </div>
+	      <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  <div class="checkbox">
+		    
+		    <label><input type="checkbox" value="" id="waters"> Keep water molecules from the PDB file.</label>
+		  </div>
+  		</div>
+		<div class="col-sm-6 col-md-6 col-lg-6">
+		  Size of random step:
+		  <input style="display: inline; float: right; width: 100px" type="number" class="form-control" step="0.00001" value="0.1" id="step">
+		  <p>
+		</div>
+	      </div>
+	      <div class="row">
+    		<div class="col-sm-6 col-md-6 col-lg-6">
+  		  <label><input type="checkbox" value="" id="threed"> Render video in anaglyph stereo (3D).</label>
+		</div>
+  		<div class="col-sm-6 col-md-6 col-lg-6">
+  		  Size of direct step:
+	  	  <input style="display: inline; float: right; width: 100px" value="0.01" type="number" class="form-control" step="0.00001" id="dstep">
+	  	  <p>
+		</div>
+	      </div>
+	      <div class="row">
+		<div class="col-sm-6 col-md-6 col-lg-6">
+  		  <div class="checkbox">
+		    <label><input type="checkbox" value="" id="fileKeep"> Download processed files (Large download).</label>
+		  </div>
+		</div>
+	      </div>
+  	    <p>
+	      <div class="container">
+  		<div class="container">
+		  <p>List of molecules to keep:
+		    <button
+		      type="button"
+		      class="btn btn-info btn-question"
+		      id="popover-keep"
+		      data-toggle="tooltip"
+		      data-placement="right"
+		      data-html="true"
+		      title="list the molecules that you wish to keep in the structure&#013;&#013;Format ex: CZA NE2 NH1&#013;&#013;(Default none)">
+		      <strong>I</strong>
+		    </button>
+		    <input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list">
+		</div>
+		
+		<div class="container">
+		  <p>List of flexibility modes to investigate:
+		    <button type="button"
+			    class="btn btn-info btn-question"
+			    id="popover-modes"
+			    data-toggle="tooltip"
+			    data-placement="right"
+			    data-html="true"
+			    title="select the modes you wish to process&#013;&#013;Format ex: 12 13 14 &#013;&#013;(Default 7 8 9 10 11)">
+		      <strong>I</strong>
+		    </button>
+		    <input type="text" value="7" style="width:70%; float:right; display: inline-block;" class="form-control" id="modes-list">
+		</div>
+		<div class="container">
+		  <p>Energy cutoff values:
+		    <button type="button"
+			    class="btn btn-info btn-question"
+			    id="popover-cutoffs"
+			    data-toggle="tooltip"
+			    data-placement="right"
+			    data-html="true"
+			    title="select energy cutoff values you wish to calculate&#013;&#013;Format ex: 1.0 2.0 3.0 4.0 &#013;&#013;(Default 1.0 2.0)">
+		      
+		      <strong>I</strong>
+		    </button>
+		    <input type="text" value="2.0" style="width:70%; float:right; display: inline-block;" class="form-control" id="cutoff-list">
+		</div>
+	      </div>
+	      
+	      <div class="form-group">
+		<label for="usr">email address:</label>
+		<input type="text" class="form-control" id="email">
+	      </div>
+	    <p>
+	      <div class="checkbox">
+    		<label><input type="checkbox" value="" id="tos" onclick="tosClick()"> I agree to the <a href="terms-of-service.html">Terms of Service</a>, acknowledging that I am using this for purely academic purposes. </label>
+	      </div>
+	      
+	      <input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
+	      
+	      <img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
+	      
+	    <p></p>
+	    
+	  </form>
+	  
+      </div>
+    </div>
+    
+  </body>
+  
+  <script src="js/parser.js"></script>
+  
 </html>
