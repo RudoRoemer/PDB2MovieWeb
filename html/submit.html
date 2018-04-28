@@ -102,7 +102,7 @@
 
 	  <div class="row">
 	    <div class="col-sm-12 col-md-12 col-lg-12">
-	      <li>List of molecules to keep from being deleted by algorithm.
+	      <li>List of molecules to keep from being deleted by algorithm.</li>
 		<button
 		  type="button" class="btn btn-info btn-question"
 		  id="popover-keep" data-toggle="tooltip"
@@ -110,55 +110,108 @@
 		  NH1&#013;&#013;(Default none)">
 		  <strong>I</strong>
 		</button>
-		<input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list"></li>
+		<input type="text" style="width:70%; float:right; display: inline-block;" class="form-control" id="mol-list">
 	    </div>
 	  </div>
 	      
-	    
-	    <div class="container">
-	      <p>List of flexibility modes to investigate:
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>List of flexibility modes to investigate.</li>
 		<button type="button"
 			class="btn btn-info btn-question"
 			id="popover-modes" data-toggle="tooltip"
 			data-placement="right" data-html="true"
-			title="select the modes you wish to
-			process&#013;&#013;Format ex: 12 13 14
-			&#013;&#013;(Default 7 8 9 10 11)">
+			title="format: 12 13 14 &#013;&#013;(Default 7
+			8 9 10 11)">
 		  <strong>I</strong>
 		</button>
 		<input type="text" value="7" style="width:70%; float:right; display: inline-block;" class="form-control" id="modes-list">
 	    </div>
-	    <div class="container">
-	      <p>Energy cutoff values:
+	  </div>
+
+	  <div class="row">
+	    <div class="col-sm-12 col-md-12 col-lg-12">
+	      <li>Energy cutoff values.</li>
 		<button type="button"
 			class="btn btn-info btn-question"
 			id="popover-cutoffs" data-toggle="tooltip"
 			data-placement="right" data-html="true"
-			title="select energy cutoff values you wish to
-			calculate&#013;&#013;Format ex: 1.0 2.0 3.0
+			title="format: 1.0 2.0 3.0
 			4.0 &#013;&#013;(Default 1.0 2.0)">
 		  
 		  <strong>I</strong>
 		</button>
 		<input type="text" value="2.0" style="width:70%; float:right; display: inline-block;" class="form-control" id="cutoff-list">
 	    </div>
+	  </div>
+
+	  <br>
 	  
+	  <div class="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+	      <div class="checkbox">
+		<label><input type="checkbox" value="" id="waters">Keep water molecules from the PDB file. </label>
+	      </div>
+  	    </div>
+
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+	      <div class="checkbox">
+		<label><input type="checkbox" value=""
+		id="multiple"> Keep multiple chains from PDB
+		file (default only uses chain A).</label>
+	      </div>
+	    </div>
+	  </div>
+
 	<hr>
 	  
 	<h4>Output preferences</h4>
 
-	<p style="margin-top: 20px;">
-	    (Optional) Select a file containing python video formatting statements:
-	    <input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block">
+	<div class="form-group">
+	  <li>Upload (optional) PYMol video formatting statements (.py file)
+	    <input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block"></li>
+	</div>
 
+	<div class="form-group">
+	  <li>Choose resolution of generated videos
+	    <label class="radio-inline"><input type="radio" name="optradio" id="res1080" checked="true">1920x1080</input></label>
+	    <label class="radio-inline"><input type="radio" name="optradio" id="res720">1280x720</input></label>
+	    <label class="radio-inline"><input type="radio" name="optradio" id="res480">640×480</input></label>
+	  </li>
+	</div>
 
+	<div class="row">
+	  <div class="col-sm-6 col-md-6 col-lg-6">
+	    <div class="checkbox">
+	      <label><input type="checkbox" value="" id="combi"> Combine positive and negative mode directions into a single video.</label>
+	    </div>
+	  </div>
+	  
+    	  <div class="col-sm-6 col-md-6 col-lg-6">
+	    <div class="checkbox">
+  	      <label><input type="checkbox" value="" id="threed"> Render video in anaglyph stereo (3D).</label>
+	    </div>
+	  </div>
+	  
+	</div>
 
-	  <p style="margin-top: 20px">
-	      Resolution:
-	      <label class="radio-inline"><input type="radio" name="optradio" id="res1080" checked="true">1920x1080</input></label>
-	      <label class="radio-inline"><input type="radio" name="optradio" id="res720">1280x720</input></label>
-	      <label class="radio-inline"><input type="radio" name="optradio" id="res480">640×480</input></label>
-	      <hr>
+	<div class="row">
+    	  <div class="col-sm-6 col-md-6 col-lg-6">
+	    <div class="checkbox">
+  	    <label><input type="checkbox" value="" id="threed"> Render video in anaglyph stereo (3D).</label>
+	    </div>
+	  </div>
+	  
+	  <div class="col-sm-6 col-md-6 col-lg-6">
+  	    <div class="checkbox">
+	      <label><input type="checkbox" value="" id="fileKeep"> Download processed files (Large download).</label>
+	    </div>
+	  </div>
+	</div>
+
+	<hr>
+
+	<!--
 	      <div class="row">
 		<div class="col-sm-6 col-md-6 col-lg-6">
 		  <div class="checkbox">
@@ -264,18 +317,25 @@
 		<input type="text" class="form-control" id="email">
 	      </div>
 	    <p>
-	      <div class="checkbox">
-    		<label><input type="checkbox" value="" id="tos" onclick="tosClick()"> I agree to the <a href="terms-of-service.html">Terms of Service</a>, acknowledging that I am using this for purely academic purposes. </label>
-	      </div>
+
+	      -->
+
+	<h4>Submit</h4>
+	
+	<div class="checkbox">
+    	  <label><input type="checkbox" value="" id="tos"
+    	  onclick="tosClick()"> I agree to
+    	  the <a href="terms-of-service.html">Terms of Service</a>,
+    	  acknowledging that I am using this for purely academic
+    	  purposes. </label>
+	</div>
 	      
-	      <input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
-	      
-	      <img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
-	      
-	    <p></p>
-	    
-	  </form>
-	  
+	<input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
+	
+	<img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
+	
+	</form>
+	
       </div>
     </div>
     
