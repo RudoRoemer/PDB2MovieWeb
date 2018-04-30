@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Physics_VR
- * Date: 12/03/2018
- * Time: 12:13
- */
 
 class DBQuerier
 {
