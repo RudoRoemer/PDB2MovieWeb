@@ -4,7 +4,7 @@ msg=$2
 doc=$3
 extra=$4
 
-shift 4 
+shift 4
 args=()
 for i in $@
 do
@@ -13,6 +13,7 @@ done
 echo $args
 (
 echo "subject: "$msg
+echo "from: no-reply@warwick.ac.uk"
 mapfile -t toSend < email-texts/$doc
 for i in "${toSend[@]}"
 do
@@ -39,5 +40,5 @@ echo "Your User Reference Code: " ${16};
 if [ $doc == "complete.txt" ]; then
   echo "Download Link: "$extra
 fi
-)| /usr/sbin/sendmail -i -- $email
+)| /usr/sbin/sendmail -i -f "no-reply@warwick.ac.uk" -- $email
 echo $?

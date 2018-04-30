@@ -104,6 +104,9 @@ echo "ARGS="$args
 ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
 eval $com
 
+mv $TMP/$purename.pdb $TMP/$purename/
+mv $TMP/$purename.py $TMP/$purename/
+
 cd $TMP/$purename;
 if [ $isUnix = 1 ]; then
 
@@ -111,6 +114,8 @@ if [ $isUnix = 1 ]; then
 	if [ $fileKeep -eq 1 ]; then
 		tar -rf $purename.tar Runs/ Modes/
 	fi
+	tar -rf $purename.tar $purename.pdb
+	tar -rf $purename.tar $purename.py
 	gzip $purename.tar
 	mv $purename.tar.gz $DEST/ ;
 	SUFFIX='.tar.gz'
@@ -118,9 +123,9 @@ if [ $isUnix = 1 ]; then
 else
 
 	if [ $fileKeep -eq 1 ]; then
-		find . | egrep Run\|Modes | zip -9 -y -r -q -@ $purename.zip
+		find . | egrep Run\|Modes|$purename.pdb|$purename.py | zip -9 -y -r -q -@ $purename.zip
 	else
-		find . | egrep Run- | zip -9 -y -r -q -@ $purename.zip
+		find . | egrep Run-|$purename.pdb|$purename.py | zip -9 -y -r -q -@ $purename.zip
 	fi
 	SUFFIX='.zip'
 
