@@ -12,11 +12,21 @@ function removeReq(entry) {
     type: 'POST',
     data: fDataDel,
     async: true,
+    'beforeSend': function() {
+      $('#loading_gif' + entry).show();
+      $("#process").prop("disabled", true);
+      $("#tos").prop("disabled", true);
+    },
     success: function(data) {
-      console.log(data);
+      $('#loading_gif' + entry).hide();
+      $("#entryTitle" + entry).remove()
+      $("#newTable" + entry).remove();
+      $("#removeButton" + entry).remove();
     },
     failure: function(data) {
       console.log("NOPE");
+    },
+    'complete': function() {
     },
     cache: false,
     contentType: false,
@@ -72,9 +82,9 @@ form.addEventListener("submit", function(e) {
       $("#response-tables").empty();
       for (i = 0; i < subRes.length; i++) {
         if (subRes[i].complete == 1) {
-          var fstLine = '<h2>' + subRes[i].original_name + ' - ' + subRes[i].filename + '</h2>';
+          var fstLine = '<h2 id="entryTitle' + i + '">' + subRes[i].original_name + ' - ' + subRes[i].filename + '</h2>';
         } else {
-          var fstLine = '<h2 style="position: absolute">' + subRes[i].original_name + '</h2><button type="button" class="btn btn-dark" onClick="removeReq(' + i + ')" style="float: right;">Remove</button>';
+          var fstLine = '<h2 id="entryTitle' + i + '" style="position: absolute">' + subRes[i].original_name + '</h2><button type="button" class="btn btn-dark" id="removeButton'+ i +'" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i +'" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
         }
         $("#response-tables").append("" +
           fstLine +
@@ -114,6 +124,7 @@ form.addEventListener("submit", function(e) {
           '</tbody>' +
           '</table>');
         //console.log(subRes[i]);
+        $("#loading_gif" + i).hide();
       };
       if (subRes.status === "failure") {
         $("#response-tables").append("" +
