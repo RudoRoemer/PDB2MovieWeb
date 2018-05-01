@@ -33,7 +33,8 @@ var tos = false;
 var molList = "";
 var modList = "";
 var cutList = "";
-var res = "";
+var res = "1920 1080";
+var isUnix = 0;
 var params;
 
 function check() {
@@ -58,6 +59,12 @@ function check() {
     res = "640 480";
   }
 
+  if ($("#zipChoice").is(":checked")) {
+    isUnix = 0;
+  } else if ($("#tarChoice").is(":checked")) {
+    isUnix = 1;
+  }
+
   if (isNaN(confs) ||
     isNaN(freq) ||
     isNaN(step) ||
@@ -65,7 +72,7 @@ function check() {
 
     return "One or more inputs are invalid." + freq + step + dstep;
   }
-  if (regEx($("#mol-list").val(), "^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$") | true) {
+  if (regEx($("#mol-list").val(), "^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$")) {
     molList = $("#mol-list").val();
   } else if (!$("#mol-list").val() == "") {
     return "Format of molecule list is incorrect.";
@@ -95,6 +102,7 @@ function check() {
 
   params = {
     "res": res,
+    "isUnix": isUnix,
     "combi": combi,
     "multiple": multiple,
     "waters": waters,
@@ -123,7 +131,7 @@ form.addEventListener("submit", function(e) {
 
   var result = check();
   if (result !== "Success") {
-    throw (result);
+    return(result);
   }
 
   var fData = new FormData(this);

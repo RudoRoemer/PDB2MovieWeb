@@ -77,9 +77,13 @@
 	}
 
 	//RegEx's for more dynamic input of lists
-	if (!preg_match('/^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$/', 	$_POST["molList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid keep list.")); }
-	if (!preg_match('/^(([0-9])([0-9]?)( ?))*$/', 						$_POST["modList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid mode list.")); }
-	if (!preg_match('/^([0-9].[0-9]+( ?))*$/',	 							$_POST["cutList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid cutoff list.")); }
+	if (!preg_match('/^([A-Z0-9][A-Z0-9]?[A-Z0-9]?( ?))*$/', $_POST["molList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid keep list.")); }
+	if (!preg_match('/^(([0-9])([0-9]?)( ?))*$/', $_POST["modList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid mode list.")); }
+	if (!preg_match('/^([0-9].[0-9]+( ?))*$/', $_POST["cutList"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid cutoff list.")); }
+
+	//RegEx's for toggle inputs
+	if (!preg_match('/^([0-9]{3,4}) ([0-9]{3,4})$/', $_POST["res"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid resolution.")); }
+	if (!preg_match('/^[0|1]/', $_POST["isUnix"])) { endOp(jsonFormat("Failure", "Something has gone wrong", "Invalid compression preference.")); }
 
 	//script would have ended if any value is not sanitized, good to send.
 	$name = basename($newLoc);
@@ -89,6 +93,7 @@
 	//$pyName = ltrim($newLocPyth, $configs["localDirectory"] . "/php/pdb_tmp/");
 	$origName = filter_var($_FILES['pdbFile']['name'], FILTER_SANITIZE_SPECIAL_CHARS);
 	$res = $_POST["res"];
+	$isUnix = $_POST["isUnix"];
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
 	$multiple =($_POST["multiple"] === "true" ? 1 : 0);
@@ -184,13 +189,14 @@
 	$sCode = $fetchRes->fetch_assoc()["secret_code"];
 
 	//all values at this point should be sanitized, format command for the processing server
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
 	$localScripts, //sdasdasdas
 	$name,
 	$res,
+	$isUnix,
 	$waters,
 	$combi,
 	$multiple,
@@ -207,7 +213,7 @@
 	$sCode,
 	$thisServer,
 	$origName,
-	date('d M y hh:mm:ss'),
+	date('d M y hh:mm:ss A'),
 	$pyName,
 	$remoteScripts);
 
@@ -267,7 +273,7 @@
 													$molList,
 													$modList,
 													$cutList,
-													date('d M y h:m:s'),
+													date('d M y h:m:s A'),
 													$sCode
 					);
 					//send first email to show the process has been accepted.
