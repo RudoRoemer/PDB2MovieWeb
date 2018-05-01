@@ -38,7 +38,7 @@ echo "Date Submitted: " ${15}
 echo "-----"
 echo "Your User Reference Code: " ${16};
 if [ $doc == "complete.txt" ]; then
-  echo "Download Link: "$extra
+  echo "Download Link: https://"$extra
 fi
 )| /usr/sbin/sendmail -i -f "no-reply@warwick.ac.uk" -- $email
 echo $?

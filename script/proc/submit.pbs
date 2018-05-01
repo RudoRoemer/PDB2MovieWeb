@@ -108,14 +108,18 @@ mv $TMP/$purename.pdb $TMP/$purename/
 mv $TMP/$purename.py $TMP/$purename/
 
 cd $TMP/$purename;
-if [ $isUnix = 1 ]; then
+
+cp $purename.pdb $oldFileName
+cp $purename.py supplied_video_params.py
+
+if [ $isUnix -eq 1 ]; then
 
 	tar -cvf $purename.tar Run-*
 	if [ $fileKeep -eq 1 ]; then
 		tar -rf $purename.tar Runs/ Modes/
 	fi
-	tar -rf $purename.tar $purename.pdb
-	tar -rf $purename.tar $purename.py
+	tar -rf $purename.tar $oldFileName
+	tar -rf $purename.tar supplied_video_params.py
 	gzip $purename.tar
 	mv $purename.tar.gz $DEST/ ;
 	SUFFIX='.tar.gz'
@@ -123,24 +127,21 @@ if [ $isUnix = 1 ]; then
 else
 
 	if [ $fileKeep -eq 1 ]; then
-		find . | egrep Run\|Modes|$purename.pdb|$purename.py | zip -9 -y -r -q -@ $purename.zip
+		zip -9 -r $purename.zip Run-* $oldFileName
 	else
-		find . | egrep Run-|$purename.pdb|$purename.py | zip -9 -y -r -q -@ $purename.zip
+		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName
 	fi
+	mv $purename.zip $DEST/ ;
 	SUFFIX='.zip'
 
 fi
 cd -;
-rm -r $TMP/$purename
 
+scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
 if [ $? -eq 0 ]; then
-
-	scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
-	if [ $? -eq 1 ]; then rm $DEST/$purename$SUFFIX; fi
+	rm $DEST/$purename$SUFFIX;
+	rm -r $TMP/$purename;
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServerLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
-
 else
-
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt  $args"
-
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 fi
