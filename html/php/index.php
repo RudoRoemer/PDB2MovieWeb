@@ -3,7 +3,7 @@
 	/*
 		this is the main section of code that allows users to make their request. It sanitizes the user's
 		input, checks to see if the user is pre-existing on the database, associate the new data with the
-		given email address, and send the request to the processing server. 
+		given email address, and send the request to the processing server.
 	*/
 
 	//Essentials are check before anything is processed
@@ -160,6 +160,7 @@
 
 	//if no user id was received, create new user
 	if (!$row) {
+
 				$rand = mt_rand(100000, 999999);
 				$stmt = $conn_sql->stmt_init();
         $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
