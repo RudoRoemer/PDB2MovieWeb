@@ -5,4 +5,11 @@ processingUser="phsbqz"
 
 wholeEntry=$(qstat -a | grep $processingUser | grep ${purename::16} | sed 's/\.moo.*/.moo/')
 qdel $wholeEntry
-qdel $?
+echo $?
+
+cd pdb_tmp/
+rm $purename*
+rm -r $purename/
+
+cd pdb_des/
+rm $purename*
