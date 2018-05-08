@@ -72,8 +72,13 @@ if [ -n "$pyName" ]; then
 	sPyName="--video $TMP/$pyName "
 fi
 
+<<<<<<< HEAD
 com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
 args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' $time $code"
+=======
+com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res "'$res'" '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' "'$sModList'" "'$sMolList'" "'$sCutList'" '$sPyName
+args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code"
+>>>>>>> 3fbf3a45cee327b15c99616457ec7897db040b47
 
 echo "NAME="$name
 echo "RES="$res
