@@ -32,7 +32,7 @@
 
           //checks each line for unauthorised chars. remark statements are always treated as text and can have special characters in them
           $san = filter_var($str, FILTER_SANITIZE_SPECIAL_CHARS);
-          if ($san !== $str && substr($str,0,6) !== "REMARK") {
+          if ($san !== $str && substr($str,0,6) !== "REMARK" && strpos($str, "'") !== false) {
             if (strpos($str, "'") !== false && (strpos($str, "HETNAM") === false AND strpos($str, "HETATM") === false)) {
               $hasPos = strpos($str, "'");
               $isHet = strpos($str, "HETNAM");

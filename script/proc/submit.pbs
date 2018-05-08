@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
+#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=00:20:00
 #PBS -V
 #PBS -k oe
 #PBS -j oe
@@ -72,7 +72,7 @@ if [ -n "$pyName" ]; then
 	sPyName="--video $TMP/$pyName "
 fi
 
-com='python3 '$EXECSRC'/pdb2movie.py '$TMP'/'$name' --res "'$res'" '$sWaters' '$sCombi' '$sMulti' '$sConfs' '$sThreed' '$sCombi' '$sFreq' '$sStep' '$sDStep' "'$sModList'" "'$sMolList'" "'$sCutList'" '$sPyName
+com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
 args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' $time $code"
 
 echo "NAME="$name
@@ -107,10 +107,8 @@ mv $TMP/$purename.pdb $TMP/$purename/
 mv $TMP/$purename.py $TMP/$purename/
 
 cd $TMP/$purename;
-
 cp $purename.pdb $oldFileName
 cp $purename.py supplied_video_params.py
-
 if [ $isUnix -eq 1 ]; then
 
 	tar -cvf $purename.tar Run-*
@@ -137,10 +135,22 @@ fi
 cd -;
 
 scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
+
 if [ $? -eq 0 ]; then
+
 	rm $DEST/$purename$SUFFIX;
 	rm -r $TMP/$purename;
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $webServerLoc/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+
+	if [ $webServerLoc -eq "advid.lnx.warwick.ac.uk" ]; then
+		URL=$webServerLoc
+	else
+		URL="pdb2movie.warwick.ac.uk"
+	fi
+
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+
 else
+
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+
 fi
