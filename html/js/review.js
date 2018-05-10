@@ -18,6 +18,7 @@ function removeReq(entry) {
       $("#tos").prop("disabled", true);
     },
     success: function(data) {
+      console.log(data);
       $('#loading_gif' + entry).hide();
       $("#entryTitle" + entry).remove()
       $("#newTable" + entry).remove();
@@ -76,15 +77,22 @@ form.addEventListener("submit", function(e) {
     type: 'POST',
     data: fData,
     async: true,
-    success: function(data) {
+    success: function(data) { //I'm so sorry you have to look at this. I'm learning angular, but for now, enjoy my JQuery bodge job.
       console.log(data);
       subRes = JSON.parse(data);
+      var completedFlag = true;
       $("#response-tables").empty();
+      if (subRes[0].complete == 0) {
+        $("#response-tables").append("<br><h2 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;>Current Requests</h1>");
+        completedFlag = false;
+      } else {
+        $("#response-tables").append("<br><h2 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Your Historical Requests</h1>");
+      }
       for (i = 0; i < subRes.length; i++) {
         if (subRes[i].complete == 1) {
-          var fstLine = '<h2 id="entryTitle' + i + '">' + subRes[i].original_name + ' - ' + subRes[i].filename + '</h2>';
+          var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' -</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/'+ subRes[i].filename +'.zip">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + '.zip</a>';
         } else {
-          var fstLine = '<h2 id="entryTitle' + i + '" style="position: absolute">' + subRes[i].original_name + '</h2><button type="button" class="btn btn-dark" id="removeButton'+ i +'" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i +'" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
+          var fstLine = '<hr><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - </h2><button type="button" class="btn btn-dark" id="removeButton'+ i +'" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i +'" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
         }
         $("#response-tables").append("" +
           fstLine +
@@ -125,6 +133,12 @@ form.addEventListener("submit", function(e) {
           '</table>');
         //console.log(subRes[i]);
         $("#loading_gif" + i).hide();
+        if (completedFlag != true && subRes.length > i+1) {
+          if (subRes[i+1].complete == 1) {
+            completedFlag = true;
+            $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px; margin-top:40px;'>Your Historical Requests</h1><hr>");
+          }
+        }
       };
       if (subRes.status === "failure") {
         $("#response-tables").append("" +

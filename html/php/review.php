@@ -28,7 +28,8 @@
   $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename
                               FROM Requests
                               INNER JOIN Users ON Requests.user_id = Users.user_id
-                              WHERE Users.email=? AND Users.secret_code=?");
+                              WHERE Users.email=? AND Users.secret_code=?
+                              ORDER BY complete ASC");
   $stmt->bind_param("si", $email, $secretCode);
   $stmt->execute();
   $sqlRes = $stmt->get_result();

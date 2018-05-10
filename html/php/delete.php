@@ -43,7 +43,6 @@
 
   //if deletion from database was successful, execute bashs script on the processing server
   if (mysqli_affected_rows($conn_sql) > 0) {
-    var_dump($conn_ssh);
     if(!ssh2_exec($conn_ssh->res, $remoteScripts . '/remove.sh ' . $filename)) { die('{"status": "Success", "text": "This has been deleted."}'); }
     die('{"status": "Success", "text": "This has been deleted."}');
   } else {
