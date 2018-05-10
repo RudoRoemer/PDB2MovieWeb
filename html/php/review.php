@@ -13,8 +13,9 @@
   }
 
   //get http args and config file data
-  $email = $_POST["email"];
-  $secretCode = $_POST["secret_code"];
+  $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+  $secretCode = filter_var((int) $_POST["secret_code"], FILTER_SANITIZE_NUMBER_INT);
+  $offSet = filter_var($_POST["offset"], FILTER_SANITIZE_NUMBER_INT);
 
   $sqlServer = $configs["sqlServer"];
   $sqlUser = $configs["sqlUser"];
@@ -25,12 +26,13 @@
   $conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
 
   $stmt = $conn_sql->stmt_init();
-  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename
+  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename, unix_timestamp(timestamp) AS timestamp
                               FROM Requests
                               INNER JOIN Users ON Requests.user_id = Users.user_id
                               WHERE Users.email=? AND Users.secret_code=?
-                              ORDER BY complete ASC");
-  $stmt->bind_param("si", $email, $secretCode);
+                              ORDER BY complete ASC, timestamp DESC
+                              LIMIT 10 OFFSET ?");
+  $stmt->bind_param("sii", $email, $secretCode, $offSet);
   $stmt->execute();
   $sqlRes = $stmt->get_result();
   $rows = array();
