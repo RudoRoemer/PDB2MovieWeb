@@ -94,6 +94,7 @@
 	$origName = filter_var($_FILES['pdbFile']['name'], FILTER_SANITIZE_SPECIAL_CHARS);
 	$res = $_POST["res"];
 	$isUnix = $_POST["isUnix"];
+	$ext = ($_POST["isUnix"] == 1 ? ".tar.gz" : ".zip");
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
 	$multiple =($_POST["multiple"] === "true" ? 1 : 0);
@@ -248,8 +249,8 @@
 
 			//insert their latest request
 	    $stmt2 = $conn_sql->stmt_init();
-	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
-			$stmt2->bind_param("sisiiiiiiddsssis", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
+	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name, extension) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)");
+			$stmt2->bind_param("sisiiiiiiddsssiss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName, $ext);
 
 			//if database changes succeed
 			if ($stmt->execute() && $stmt2->execute()) {

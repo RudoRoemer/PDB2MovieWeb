@@ -118,7 +118,8 @@ function sendReq() {
           var date = new Date(subRes[i].timestamp*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
 
           if (subRes[i].complete == 1) {
-            var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - '+ date +'</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + '.zip">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + '.zip</a>';
+            var extension = (subRes[i].extension !== null ? subRes[i].extension : ".zip");
+            var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - '+ date +'</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension +'">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '</a>';
           } else {
             var fstLine = '<hr><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - '+ date +' </h2><button type="button" class="btn btn-dark" id="removeButton' + i + '" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i + '" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
           }
