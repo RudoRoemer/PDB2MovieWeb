@@ -1,9 +1,5 @@
 #!/bin/bash
-
+source ../../config.conf
 purename=$1
-log=/var/www/html/query.txt
-
-mysql -u admin -p'penicillin_loves_beta_lactamase' -D db_pdb2movie -e"UPDATE Requests SET complete = 1 WHERE filename='$purename';"
-
-echo $query>>$log
-eval $query
+mysql -u $sqlUser -p"$sqlPassword" -D $sqlDB -e"UPDATE Requests SET time_comp = CURRENT_TIMESTAMP() WHERE filename='$purename' AND complete = 0;"
+mysql -u $sqlUser -p"$sqlPassword" -D $sqlDB -e"UPDATE Requests SET complete = 1 WHERE filename='$purename';"

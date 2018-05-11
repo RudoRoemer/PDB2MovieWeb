@@ -88,7 +88,7 @@ function removeReq(entry) {
 
 function sendReq() {
 
-  var fData = new FormData(this);
+  var fData = new FormData();
   fData.append("email", $("#email_form").val());
   fData.append("secret_code", parseInt($("#code_form").val()));
   fData.append("offset", offSet);
@@ -160,6 +160,15 @@ function sendReq() {
             '<td>' + subRes[i].cutList + '</td>' +
             '</tbody>' +
             '</table>');
+
+            if (subRes[i].time_start !== 0) {
+              var dateStart = new Date(subRes[i].time_start*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
+              $("#response-tables").append("<p>Request began processing at: "+dateStart+"</p>");
+            }
+            if (subRes[i].time_comp !== 0) {
+              var dateComp = new Date(subRes[i].time_comp*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
+              $("#response-tables").append("<p>Request finished processing at: "+dateComp+"</p>");
+            }
 
           //console.log(subRes[i]);
           $("#loading_gif" + i).hide();

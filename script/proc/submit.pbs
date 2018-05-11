@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=00:20:00
+#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
 #PBS -V
 #PBS -k oe
 #PBS -j oe
@@ -73,23 +73,24 @@ if [ -n "$pyName" ]; then
 fi
 
 com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
-args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' $time $code"
+args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code"
 
-echo "NAME="$name
-echo "RES="$res
-echo "WATERS="$waters
-echo "COMBI"$combi
-echo "MULTIPLE="$multiple
-echo "THREED="$threed
-echo "FILEKEEP="$fileKeep
-echo "CONFS="$confs
-echo "FREQ="$freq
-echo "STEP="$step
-echo "DSTEP="$dstep
-echo "EMAIL="$email
-echo "MOLLIST="$molList
-echo "MODLIST="$modList
-echo "CUTLIST="$cutList
+newFile=$TMP/$purename/$oldFileName-params.txt
+echo "NAME="$name>>$newFile
+echo "RES="$res>>$newFile
+echo "WATERS="$waters>>$newFile
+echo "COMBI"$combi>>$newFile
+echo "MULTIPLE="$multiple>>$newFile
+echo "THREED="$threed>>$newFile
+echo "FILEKEEP="$fileKeep>>$newFile
+echo "CONFS="$confs>>$newFile
+echo "FREQ="$freq>>$newFile
+echo "STEP="$step>>$newFile
+echo "DSTEP="$dstep>>$newFile
+echo "EMAIL="$email>>$newFile
+echo "MOLLIST="$molList>>$newFile
+echo "MODLIST="$modList>>$newFile
+echo "CUTLIST="$cutList>>$newFile
 echo "PWD="$PWD
 echo "REMOTESCRIPT="$REMOTESCRIPT
 echo "TMP="$TMP
@@ -100,7 +101,7 @@ echo "COM="$com
 echo "PYNAME="$pyName
 echo "ARGS="$args
 
-ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
+ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
 eval $com
 
 mv $TMP/$purename.pdb $TMP/$purename/
@@ -117,6 +118,7 @@ if [ $isUnix -eq 1 ]; then
 	fi
 	tar -rf $purename.tar $oldFileName
 	tar -rf $purename.tar supplied_video_params.py
+	tar -rf $purename.tar $oldFileName-params.txt
 	gzip $purename.tar
 	mv $purename.tar.gz $DEST/ ;
 	SUFFIX='.tar.gz'
@@ -124,9 +126,9 @@ if [ $isUnix -eq 1 ]; then
 else
 
 	if [ $fileKeep -eq 1 ]; then
-		zip -9 -r $purename.zip Run-* $oldFileName
+		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py
 	else
-		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName
+	  zip -9 -r $purename.zip Run-* $oldFileName supplied_video_params.py
 	fi
 	mv $purename.zip $DEST/ ;
 	SUFFIX='.zip'
