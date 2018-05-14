@@ -5,7 +5,7 @@ body {
 .container{
 	background-color: white;
 	border-radius: 5px;
-  padding-left: 10px; 
+  padding-left: 10px;
 
 }
 
@@ -80,7 +80,7 @@ button[type="button"]:click {
 	background-size: 150.75px 100px;
 	height: 100px;
 	padding: 10px;
-	
+
 }
 
 #header {
@@ -115,6 +115,10 @@ button[type="button"]:click {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	margin: 0;
+}
+
+#version-tag {
+	float: right;
 }
 
 .btn-info + .tooltip > .tooltip-inner {
