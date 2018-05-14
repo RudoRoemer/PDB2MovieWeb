@@ -1,2 +1,2 @@
-textFile=version.txt
+textFile=../../html/version.txt
 git describe --tags > $textFile
