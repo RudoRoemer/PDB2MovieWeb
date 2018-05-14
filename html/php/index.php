@@ -19,9 +19,9 @@
 	if (!$_POST["tos"] === true) {
 		die("The Terms of Service were not accepted.");
 	}
-
+	$pyFileUsed = file_exists($_FILES['pyFile']['tmp_name']);
 	//collisions possible with this - astronomically low chance for two file to exist in the same timeframe to affect each other
-	$sha1Args = sha1($_POST["confs"] . $_POST["freq"] . $_POST["step"] . $_POST["dstep"] . $_POST["email"] . $_POST["modList"] . $_POST["molList"] . $_POST["cutList"] . $_POST["waters"] . $_POST["combi"] . $_POST["threed"] . $_POST["multiple"]);
+	$sha1Args = sha1(var_export($_POST, True) . $pyFileUsed);
 	$sha1File = sha1_file($_FILES['pdbFile']['tmp_name']);
 	$sha1Final = sha1($sha1Args . $sha1File);
 
@@ -278,7 +278,7 @@
 													$sCode
 					);
 					//send first email to show the process has been accepted.
-					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args . "; cd -") ;
+					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
 					endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
 
 				}

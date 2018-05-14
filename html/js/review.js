@@ -135,7 +135,7 @@ function sendReq() {
             '<th scope="col">Multi</th>' +
             '<th scope="col">Waters</th>' +
             '<th scope="col">Threed</th>' +
-            '<th scope="col">Confs</th>' +  //4 Weeks, 1 Day, 2 Hours, 20 Minutes
+            '<th scope="col">Confs</th>' + 
             '<th scope="col">Freq</th>' +
             '<th scope="col">Step</th>' +
             '<th scope="col">D. Step</th>' +
