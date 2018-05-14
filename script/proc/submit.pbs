@@ -101,7 +101,7 @@ echo "COM="$com
 echo "PYNAME="$pyName
 echo "ARGS="$args
 
-ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Your Request' processing.txt NULL $args"
+ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
 eval $com
 
 mv $TMP/$purename.pdb $TMP/$purename/
@@ -126,9 +126,9 @@ if [ $isUnix -eq 1 ]; then
 else
 
 	if [ $fileKeep -eq 1 ]; then
-		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py
+		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt
 	else
-	  zip -9 -r $purename.zip Run-* $oldFileName supplied_video_params.py
+	  zip -9 -r $purename.zip Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt
 	fi
 	mv $purename.zip $DEST/ ;
 	SUFFIX='.zip'
@@ -149,10 +149,10 @@ if [ $? -eq 0 ]; then
 		URL="pdb2movie.warwick.ac.uk"
 	fi
 
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Complete' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 
 else
 
-	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Your Request' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
+	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Error' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 
 fi

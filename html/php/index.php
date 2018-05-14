@@ -19,9 +19,9 @@
 	if (!$_POST["tos"] === true) {
 		die("The Terms of Service were not accepted.");
 	}
-
+	$pyFileUsed = file_exists($_FILES['pyFile']['tmp_name']);
 	//collisions possible with this - astronomically low chance for two file to exist in the same timeframe to affect each other
-	$sha1Args = sha1($_POST["confs"] . $_POST["freq"] . $_POST["step"] . $_POST["dstep"] . $_POST["email"] . $_POST["modList"] . $_POST["molList"] . $_POST["cutList"] . $_POST["waters"] . $_POST["combi"] . $_POST["threed"] . $_POST["multiple"]);
+	$sha1Args = sha1(var_export($_POST, True) . $pyFileUsed);
 	$sha1File = sha1_file($_FILES['pdbFile']['tmp_name']);
 	$sha1Final = sha1($sha1Args . $sha1File);
 
@@ -94,6 +94,7 @@
 	$origName = filter_var($_FILES['pdbFile']['name'], FILTER_SANITIZE_SPECIAL_CHARS);
 	$res = $_POST["res"];
 	$isUnix = $_POST["isUnix"];
+	$ext = ($_POST["isUnix"] == 1 ? ".tar.gz" : ".zip");
 	$waters = ($_POST["waters"] === "true" ? 1 : 0);
 	$combi = ($_POST["combi"] === "true" ? 1 : 0);
 	$multiple =($_POST["multiple"] === "true" ? 1 : 0);
@@ -248,8 +249,8 @@
 
 			//insert their latest request
 	    $stmt2 = $conn_sql->stmt_init();
-	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
-			$stmt2->bind_param("sisiiiiiiddsssis", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName);
+	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name, extension) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)");
+			$stmt2->bind_param("sisiiiiiiddsssiss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName, $ext);
 
 			//if database changes succeed
 			if ($stmt->execute() && $stmt2->execute()) {
@@ -277,7 +278,7 @@
 													$sCode
 					);
 					//send first email to show the process has been accepted.
-					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Your Request' accepted.txt NULL " . $args . "; cd -") ;
+					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
 					endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
 
 				}

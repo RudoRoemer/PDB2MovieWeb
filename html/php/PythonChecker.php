@@ -22,19 +22,50 @@
       $res = $this->baseCheck();
 
       if ($res === "Success") {
-        /* TODO: white list of py commands for each line. This is difficult to achieve with no knowledge of the innter workings and security of the freemol extension for pymol.
-        So far have found no one who knows the workings of that, nor anyone who is willing to try to penetrate security via a .py file. Talks with CSC may be needed for that
-        one, as well as confirmation from the person attacking the system that they will do nothing harmful. This - for now until further information is give - seems out of my
-        job scope.
+        $file=file_get_contents( $this->getTmpLocation() );
+        $remove = "\n";
+        $split = explode($remove, $file);
+        $lCount = 1;
+        foreach ($split as $str) {
+          /*
+            if (cmd) {
+              if ($str.includes(".set_view(")) {
+                if ($str.includes(")")) {
+                  $externalFlag = false
+                  $cmdParams=rtrim(($str, "cmd.set_view(")).explode(",")
+                  if (!(regEx.test($cmdParams, *FIT FORMAT: signed float, ignore spacing*))) FAILURE
+                } else {
 
-        For now, I will add in a feature taht will make sure that the first line starts with the initialisation, and that the next section is a specific function that only
-        allow for the camera position to be changed.
+                }
+              }
+              else if ($str.includes(".color(")) standardCheck((rtrim($str,"cmd.color(")).explode(","))
+              else if ($str.includes(".show(")) standardCheck((rtrim($str,"cmd.show(")).explode(","))
+              else if ($str.includes(".select(")) standardCheck((rtrim($str,"cmd.select(")).explode(","))
+              else FAILURE; break;
 
-        Another suggestion is a selection of server-side python scripts for the user to choose from.*/
+            } else {
+              if ($externalFlag === true) {
+                $cmdParams=rtrim(($str, "cmd.set_view(")).explode(",")
+                if (!(regEx.test($cmdParams, *FIT FORMAT: signed float, ignore spacing*))) FAILURE
+              } else FAILURE
+            }
+          */
+        }
       }
 
       return $res;
 
     }
+
+    /*
+
+    function standardCheck(params) {
+      for ($param in $params) {
+        regEx.test($param, "FIT FORMAT: '(up to 20 alphanumerics or - or _)' ")
+      }
+    }
+
+    */
+
   }
 ?>

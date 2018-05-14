@@ -26,7 +26,7 @@
   $conn_sql = mysqli_connect($sqlServer,$sqlUser, $sqlPass, $sqlDB) or die("Connection failed: " . mysql_connect_error());
 
   $stmt = $conn_sql->stmt_init();
-  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename, unix_timestamp(timestamp) AS timestamp, unix_timestamp(time_start) AS time_start, unix_timestamp(time_comp) AS time_comp
+  $stmt = $conn_sql->prepare("SELECT original_name, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, complete, req_id, filename, unix_timestamp(timestamp) AS timestamp, unix_timestamp(time_start) AS time_start, unix_timestamp(time_comp) AS time_comp, extension
                               FROM Requests
                               INNER JOIN Users ON Requests.user_id = Users.user_id
                               WHERE Users.email=? AND Users.secret_code=?
