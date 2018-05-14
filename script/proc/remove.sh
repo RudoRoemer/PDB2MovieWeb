@@ -11,5 +11,7 @@ cd pdb_tmp/
 rm $purename*
 rm -r $purename/
 
-cd pdb_des/
+cd ../pdb_des/
 rm $purename*
+
+cd ..
