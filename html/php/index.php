@@ -108,8 +108,10 @@
 	$molList = $_POST["molList"];
 	$modList = $_POST["modList"];
 	$cutList = $_POST["cutList"];
+	$comment = filter_var($_POST["comment"], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
 	$remote_host = $configs["remoteHost"];
 	$remote_host_fp = $configs["remoteHostFingerPrint"];
+	$remoteCluster = $configs["remoteCluster"];
 	$user = $configs["remoteUser"];
 	$location = $configs["remoteDirectory"];
 	$remoteScripts = $configs["remoteScripts"];
@@ -190,7 +192,7 @@
 	$sCode = $fetchRes->fetch_assoc()["secret_code"];
 
 	//all values at this point should be sanitized, format command for the processing server
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s" -q taskfarm %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s",COMMENT="%s" -q %s %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -216,6 +218,8 @@
 	$origName,
 	date('d M y hh:mm:ss A'),
 	$pyName,
+	$comment,
+	$remoteCluster,
 	$remoteScripts);
 
 	//get current and max requests from user
@@ -249,8 +253,8 @@
 
 			//insert their latest request
 	    $stmt2 = $conn_sql->stmt_init();
-	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name, extension) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)");
-			$stmt2->bind_param("sisiiiiiiddsssiss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName, $ext);
+	    $stmt2 = $conn_sql->prepare("INSERT INTO Requests (filename, python_used, resolution, combi, multi, waters, threed, confs, freq, step, dstep, molList, modList, cutList, req_id, user_id, original_name, extension, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)");
+			$stmt2->bind_param("sisiiiiiiddsssisss", $rawname, $pyFileUsed, $res, intval($combi), intval($multiple), intval($waters), intval($threed), $confs, $freq, $step, $dstep, $molList, $modList, $cutList, $userID, $origName, $ext, $comment);
 
 			//if database changes succeed
 			if ($stmt->execute() && $stmt2->execute()) {

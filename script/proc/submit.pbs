@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=20,pmem=2000mb,walltime=04:00:00
+#PBS -l nodes=1:ppn=16,pmem=2000mb,walltime=04:00:00
 #PBS -V
 #PBS -k oe
 #PBS -j oe

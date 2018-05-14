@@ -35,6 +35,7 @@ var modList = "";
 var cutList = "";
 var res = "1920 1080";
 var isUnix = 0;
+var comment = ($("#comment").val().replace(/\s/g, '').length > 0 ? $("#comment").val() : "NULL");
 var params;
 
 function check() {
@@ -50,6 +51,8 @@ function check() {
   dstep = parseFloat($("#dstep").val());
   email = $("#email").val();
   tos = $("#tos").prop("checked");
+
+  if (comment.length > 300) { return "comment length not allowed."; }
 
   if ($("#res1080").is(":checked")) {
     res = "1920 1080";
@@ -114,6 +117,7 @@ function check() {
     "dstep": dstep,
     "email": email,
     "tos": tos,
+    "comment" : comment,
     "molList": molList,
     "modList": modList,
     "cutList": cutList
@@ -131,7 +135,9 @@ form.addEventListener("submit", function(e) {
 
   var result = check();
   if (result !== "Success") {
-    return(result);
+    alert(result );
+    console.error(result);
+    throw new Error();
   }
 
   var fData = new FormData(this);
@@ -193,6 +199,13 @@ $(document).ready(function() {
       }, 1000);
     }
   });
+});
+
+$("#comment").keyup(function(){
+
+  var tmp = 300 - $(this).val().length
+  res = (tmp < 0 ? "This comment is " + Math.abs(tmp) + " character"+ (Math.abs(tmp) !== 1 ? "s" : "") +" too long." : tmp + " character"+ (tmp !== 1 ? "s" : "") +" left." );
+  $("#count").text(res);
 });
 
 function returnToForm() {
