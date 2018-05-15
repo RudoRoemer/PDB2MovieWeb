@@ -105,10 +105,11 @@
 	$step = $_POST["step"];
 	$dstep = $_POST["dstep"];
 	$email = $_POST["email"];
+	$emailSuffix = end(explode('@',$email));
 	$molList = $_POST["molList"];
 	$modList = $_POST["modList"];
 	$cutList = $_POST["cutList"];
-	$comment = filter_var($_POST["comment"], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
+	$comment = preg_replace("/[^a-zA-Z0-9 ,.!_]/", '', $_POST["comment"]);
 	$remote_host = $configs["remoteHost"];
 	$remote_host_fp = $configs["remoteHostFingerPrint"];
 	$remoteCluster = $configs["remoteCluster"];
@@ -171,8 +172,8 @@
 
 				$rand = mt_rand(100000, 999999);
 				$stmt = $conn_sql->stmt_init();
-        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0. ?);");
-        $stmt->bind_param("s", $email, $rand);
+        $stmt = $conn_sql->prepare("INSERT INTO Users (email, max_requests, user_id, current_requests, blacklisted, secret_code) VALUES (?, 3, NULL, 0, 0, ?);");
+        $stmt->bind_param("si", $email, $rand);
         $stmt->execute();
 
         $userID = mysqli_stmt_insert_id($stmt);
@@ -192,11 +193,13 @@
 	$sCode = $fetchRes->fetch_assoc()["secret_code"];
 
 	//all values at this point should be sanitized, format command for the processing server
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME="%s",TIME="%s",COMMENT="%s",PYNAME="%s" -q %s %s/submit.pbs',
+
+	$qsub_cmd = sprintf('TOCLEAN="%s"; CLEAN=${TOCLEAN//[^a-zA-Z0-9 ,.!_]/};CLEAN=`echo -n $CLEAN | tr A-Z a-z`; cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME="%s",TIME="%s",COMMENT="$CLEAN",PYNAME="%s" -q %s %s/submit.pbs',
+	$comment,
 	$remoteScripts,
 	$name,
 	$remoteScripts,
-	$localScripts, //sdasdasdas
+	$localScripts,
 	$name,
 	$res,
 	$isUnix,
@@ -216,21 +219,32 @@
 	$sCode,
 	$thisServer,
 	$origName,
-	date('d M y hh:mm:ss A'),
-	$comment,
+	date('d M y h:m:s A'),
 	$pyName,
 	$remoteCluster,
 	$remoteScripts);
 
 	//get current and max requests from user
 	$stmt = $conn_sql->stmt_init();
-	$stmt = $conn_sql->prepare("SELECT current_requests, max_requests FROM Users WHERE user_id=?");
+	$stmt = $conn_sql->prepare("SELECT current_requests, max_requests, blacklisted FROM Users WHERE user_id=?");
 	$stmt->bind_param("s", $userID);
 	$stmt->execute();
 	$fetchRes = $stmt->get_result();
-	$fetch = $fetchRes->fetch_assoc();
-	$currReqs = $fetch["current_requests"];
-	$maxReqs = $fetch["max_requests"];
+	$fetchUser = $fetchRes->fetch_assoc();
+	$currReqs = $fetchUser["current_requests"];
+	$maxReqs = $fetchUser["max_requests"];
+
+	$stmt = $conn_sql->prepare("SELECT max_requests, blacklisted FROM Favourites WHERE email_suffix=?");
+	$stmt->bind_param("s", $emailSuffix);
+	$stmt->execute();
+	$fetchRes = $stmt->get_result();
+	$fetchFav = $fetchRes->fetch_assoc();
+	$maxReqsFav = $fetchFav["max_requests"];
+
+	if ($fetchUser["blacklisted"]) { endOp(jsonFormat("Failure", "Something has gone wrong.", "You have been blacklisted.")); }
+	if ($fetchFav["blacklisted"]) { endOp(jsonFormat("Failure", "Something has gone wrong.", "We do not allow the use of this kind of email address.")); }
+
+	if(is_numeric($maxReqsFav)) { $maxReqs = max($maxReqs, $maxReqsFav); }
 
 	//get completion status from latest file under same hashed filename
 	$stmt = $conn_sql->stmt_init();
@@ -263,7 +277,7 @@
 	          endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
 	      } else {
 					//format email args
-					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s",
+					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s '%s'",
 													$origName,
 													$pyToPass,
 													$res,
@@ -279,7 +293,8 @@
 													$modList,
 													$cutList,
 													date('d M y h:m:s A'),
-													$sCode
+													$sCode,
+													$comment
 					);
 					//send first email to show the process has been accepted.
 					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
