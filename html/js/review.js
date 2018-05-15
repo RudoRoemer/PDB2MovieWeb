@@ -106,7 +106,6 @@ function sendReq() {
 
       if (subRes.length > 0) {
         if (subRes[0].complete == 0) {
-          console.log("baddadadd");
           $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Current Requests</h1><hr>");
           completedFlag = false;
         } else {
@@ -115,13 +114,15 @@ function sendReq() {
 
         for (i = 0; i < subRes.length; i++) {
 
-          var date = new Date(subRes[i].timestamp*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
+          var date = new Date(subRes[i].timestamp * 1000).toLocaleString('en-GB', {
+            timeZone: 'UTC'
+          });
 
           if (subRes[i].complete == 1) {
             var extension = (subRes[i].extension !== null ? subRes[i].extension : ".zip");
-            var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - '+ date +'</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension +'">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '</a>';
+            var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - ' + date + '</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '</a>';
           } else {
-            var fstLine = '<hr><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - '+ date +' </h2><button type="button" class="btn btn-dark" id="removeButton' + i + '" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i + '" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
+            var fstLine = '<hr><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - ' + date + ' </h2><button type="button" class="btn btn-dark" id="removeButton' + i + '" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i + '" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
           }
 
           $("#response-tables").append("" +
@@ -135,7 +136,7 @@ function sendReq() {
             '<th scope="col">Multi</th>' +
             '<th scope="col">Waters</th>' +
             '<th scope="col">Threed</th>' +
-            '<th scope="col">Confs</th>' + 
+            '<th scope="col">Confs</th>' +
             '<th scope="col">Freq</th>' +
             '<th scope="col">Step</th>' +
             '<th scope="col">D. Step</th>' +
@@ -162,14 +163,23 @@ function sendReq() {
             '</tbody>' +
             '</table>');
 
-            if (subRes[i].time_start !== 0) {
-              var dateStart = new Date(subRes[i].time_start*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
-              $("#response-tables").append("<p>Request began processing at: "+dateStart+"</p>");
-            }
-            if (subRes[i].time_comp !== 0) {
-              var dateComp = new Date(subRes[i].time_comp*1000).toLocaleString('en-GB', { timeZone: 'UTC' });
-              $("#response-tables").append("<p>Request finished processing at: "+dateComp+"</p>");
-            }
+          $("#response-tables").append("<br><p>Comment: " +
+            "<blockquote class='blockquote' style='margin-left:20px'>" +
+            "\"" + (subRes[i].comment === "NO_COMMENT" ? "" : subRes[i].comment) + "\"" +
+            "</blockquote><br>");
+
+          if (subRes[i].time_start !== 0) {
+            var dateStart = new Date(subRes[i].time_start * 1000).toLocaleString('en-GB', {
+              timeZone: 'UTC'
+            });
+            $("#response-tables").append("<p>Request began processing at: " + dateStart + "</p>");
+          }
+          if (subRes[i].time_comp !== 0) {
+            var dateComp = new Date(subRes[i].time_comp * 1000).toLocaleString('en-GB', {
+              timeZone: 'UTC'
+            });
+            $("#response-tables").append("<p>Request finished processing at: " + dateComp + "</p>");
+          }
 
           //console.log(subRes[i]);
           $("#loading_gif" + i).hide();
