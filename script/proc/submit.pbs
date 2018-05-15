@@ -76,6 +76,35 @@ fi
 com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
 args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code '$comment'"
 
+echo "NAME="$name
+echo "RES="$res
+echo "WATERS="$waters
+echo "COMBI"$combi
+echo "MULTIPLE="$multiple
+echo "THREED="$threed
+echo "FILEKEEP="$fileKeep
+echo "CONFS="$confs
+echo "FREQ="$freq
+echo "STEP="$step
+echo "DSTEP="$dstep
+echo "EMAIL="$email
+echo "MOLLIST="$molList
+echo "MODLIST="$modList
+echo "CUTLIST="$cutList
+echo "COMMENT="$comment
+echo "PWD="$PWD
+echo "REMOTESCRIPT="$REMOTESCRIPT
+echo "TMP="$TMP
+echo "DEST="$DEST
+echo "EXC="$EXECSRC
+echo "PURENAME="$purename
+echo "COM="$com
+echo "PYNAME="$pyName
+echo "ARGS="$args
+
+ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
+eval $com
+
 newFile=$TMP/$purename/$oldFileName-params.txt
 echo "NAME="$name>>$newFile
 echo "RES="$res>>$newFile
@@ -93,18 +122,6 @@ echo "MOLLIST="$molList>>$newFile
 echo "MODLIST="$modList>>$newFile
 echo "CUTLIST="$cutList>>$newFile
 echo "COMMENT="$comment>>$newFile
-echo "PWD="$PWD
-echo "REMOTESCRIPT="$REMOTESCRIPT
-echo "TMP="$TMP
-echo "DEST="$DEST
-echo "EXC="$EXECSRC
-echo "PURENAME="$purename
-echo "COM="$com
-echo "PYNAME="$pyName
-echo "ARGS="$args
-
-ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
-eval $com
 
 mv $TMP/$purename.pdb $TMP/$purename/
 mv $TMP/$purename.py $TMP/$purename/
