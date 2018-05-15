@@ -192,7 +192,7 @@
 	$sCode = $fetchRes->fetch_assoc()["secret_code"];
 
 	//all values at this point should be sanitized, format command for the processing server
-	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME=%s,TIME="%s",PYNAME="%s",COMMENT="%s" -q %s %s/submit.pbs',
+	$qsub_cmd = sprintf('cd %s && qsub -N %s -v LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME="%s",TIME="%s",COMMENT="%s",PYNAME="%s" -q %s %s/submit.pbs',
 	$remoteScripts,
 	$name,
 	$remoteScripts,
@@ -217,8 +217,8 @@
 	$thisServer,
 	$origName,
 	date('d M y hh:mm:ss A'),
-	$pyName,
 	$comment,
+	$pyName,
 	$remoteCluster,
 	$remoteScripts);
 

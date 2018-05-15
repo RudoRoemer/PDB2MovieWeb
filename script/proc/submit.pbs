@@ -27,6 +27,7 @@ modList=${MODLIST}
 cutList=${CUTLIST}
 PWD=${LOC}
 REMOTESCRIPT=${RETDIR}
+comment=${COMMENT}
 TMP="$PWD/pdb_tmp"
 DEST="$PWD/pdb_des"
 EXECSRC="$PWD/pdb2movie"
@@ -73,7 +74,7 @@ if [ -n "$pyName" ]; then
 fi
 
 com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
-args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code"
+args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code '$comment'"
 
 newFile=$TMP/$purename/$oldFileName-params.txt
 echo "NAME="$name>>$newFile
@@ -91,6 +92,7 @@ echo "EMAIL="$email>>$newFile
 echo "MOLLIST="$molList>>$newFile
 echo "MODLIST="$modList>>$newFile
 echo "CUTLIST="$cutList>>$newFile
+echo "COMMENT="$comment>>$newFile
 echo "PWD="$PWD
 echo "REMOTESCRIPT="$REMOTESCRIPT
 echo "TMP="$TMP
@@ -143,7 +145,7 @@ if [ $? -eq 0 ]; then
 	rm $DEST/$purename$SUFFIX;
 	rm -r $TMP/$purename;
 
-	if [ $webServerLoc -eq "advid.lnx.warwick.ac.uk" ]; then
+	if [ $webServerLoc == "advid.lnx.warwick.ac.uk" ]; then
 		URL=$webServerLoc
 	else
 		URL="pdb2movie.warwick.ac.uk"

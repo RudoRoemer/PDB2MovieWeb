@@ -35,8 +35,10 @@ var modList = "";
 var cutList = "";
 var res = "1920 1080";
 var isUnix = 0;
-var comment = ($("#comment").val().replace(/\s/g, '').length > 0 ? $("#comment").val() : "NULL");
+var comment;
 var params;
+
+console.log($("#comment").val().replace(/\s/g, '').length);
 
 function check() {
   combi = $("#combi").prop("checked");
@@ -51,7 +53,9 @@ function check() {
   dstep = parseFloat($("#dstep").val());
   email = $("#email").val();
   tos = $("#tos").prop("checked");
-
+  comment = ($("#comment").val().replace(/\s/g, '').length > 0 ? $("#comment").val() : "NO_COMMENT");
+  console.log($("#comment").val().replace(/\s/g, '').length);
+  console.log(comment);
   if (comment.length > 300) { return "comment length not allowed."; }
 
   if ($("#res1080").is(":checked")) {

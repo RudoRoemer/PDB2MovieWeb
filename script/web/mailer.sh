@@ -37,6 +37,8 @@ echo "Cutoffs: " ${14}
 echo "Date Submitted: " ${15}
 echo "-----"
 echo "Your User Reference Code: " ${16};
+echo "-----"
+echo "Your Comments: " ${17}
 if [ $doc == "complete.txt" ]; then
   echo "Download Link: https://"$extra
 fi
