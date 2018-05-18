@@ -1,5 +1,7 @@
 # PDB2MovieWeb
-Web-based front- and backend for PDB2Movie scripts
+Web-based front- and backend for PDB2Movie script
+
+http://phd2movie.warwick.ac.uk
 
 This service uses low priority compute cycles at the Scientific Computing Research Technology Platform 
 of the University of Warwick. The service is provided for free at the moment based on a low volume of such requests. 
