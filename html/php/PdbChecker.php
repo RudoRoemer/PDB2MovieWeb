@@ -24,7 +24,7 @@
       if ($this->checkRes === "Success") {
 
         //split text lines in file into array and loop
-        $file=file_get_contents( $this->getTmpLocation() );
+      $file=file_get_contents( $_FILES[$this->file]['tmp_name'] /*$this->getTmpLocation()*/ );
         $remove = "\n";
         $split = explode($remove, $file);
         $lCount = 1;

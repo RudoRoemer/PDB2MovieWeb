@@ -106,22 +106,22 @@ ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStar
 eval $com
 
 newFile=$TMP/$purename/$oldFileName-params.txt
-echo "NAME="$name>>$newFile
-echo "RES="$res>>$newFile
-echo "WATERS="$waters>>$newFile
-echo "COMBI"$combi>>$newFile
-echo "MULTIPLE="$multiple>>$newFile
-echo "THREED="$threed>>$newFile
-echo "FILEKEEP="$fileKeep>>$newFile
-echo "CONFS="$confs>>$newFile
-echo "FREQ="$freq>>$newFile
-echo "STEP="$step>>$newFile
-echo "DSTEP="$dstep>>$newFile
-echo "EMAIL="$email>>$newFile
-echo "MOLLIST="$molList>>$newFile
-echo "MODLIST="$modList>>$newFile
-echo "CUTLIST="$cutList>>$newFile
-echo "COMMENT="$comment>>$newFile
+echo "NAME="$name"\n">>$newFile
+echo "RES="$res"\n">>$newFile
+echo "WATERS="$waters"\n">>$newFile
+echo "COMBI"$combi"\n">>$newFile
+echo "MULTIPLE="$multiple"\n">>$newFile
+echo "THREED="$threed"\n">>$newFile
+echo "FILEKEEP="$fileKeep"\n">>$newFile
+echo "CONFS="$confs"\n">>$newFile
+echo "FREQ="$freq"\n">>$newFile
+echo "STEP="$step"\n">>$newFile
+echo "DSTEP="$dstep"\n">>$newFile
+echo "EMAIL="$email"\n">>$newFile
+echo "MOLLIST="$molList"\n">>$newFile
+echo "MODLIST="$modList"\n">>$newFile
+echo "CUTLIST="$cutList"\n">>$newFile
+echo "COMMENT="$comment"\n">>$newFile
 
 mv $TMP/$purename.pdb $TMP/$purename/
 mv $TMP/$purename.py $TMP/$purename/
@@ -163,9 +163,9 @@ if [ $? -eq 0 ]; then
 	rm -r $TMP/$purename;
 
 	if [ $webServerLoc == "advid.lnx.warwick.ac.uk" ]; then
-		URL=$webServerLoc
-	else
 		URL="pdb2movie.warwick.ac.uk"
+	else
+		URL=$webServerLoc
 	fi
 
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Complete' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
