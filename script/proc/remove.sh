@@ -7,11 +7,9 @@ wholeEntry=$(qstat -a | grep $processingUser | grep ${purename::16} | sed 's/\.m
 qdel $wholeEntry
 echo $?
 
-cd pdb_tmp/
-rm $purename*
-rm -r $purename/
+rm pdb_tmp/$purename*
+rm -r pdb_tmp/$purename/
 
-cd ../pdb_des/
-rm $purename*
+rm pdb_des/$purename*
 
 cd ..

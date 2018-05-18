@@ -45,7 +45,7 @@
         }
 
         //file too big
-        if ($_FILES[$this->file]['size'] > 10485760) { //10mB
+        if ($_FILES[$this->file]['size'] > $configs["maxFileSize"] ) { //10mB
           throw new RuntimeException('Exceeded filesize limit.');
         }
 
