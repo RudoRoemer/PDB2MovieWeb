@@ -19,6 +19,7 @@
 
     public function check() {
 
+      global $configs;
       $this->baseCheck();
 
       if ($this->checkRes === "Success") {
@@ -56,73 +57,79 @@
             continue 1;
           }
 
+          if ($configs["useBlackList"] === "1") {
+            foreach($bsplt as $bl) {
 
-          foreach($bsplt as $bl) {
-
-            $bl = preg_replace("/[^a-zA-Z0-9(),;:._# ]+/", "", $bl);
+              $bl = preg_replace("/[^a-zA-Z0-9(),;:._# ]+/", "", $bl);
 
 
-            if (strpos($str, $bl) !== false ) {
+              if (strpos($str, $bl) !== false ) {
 
-              $blackListFlag = true;
-              break 2;
+                $blackListFlag = true;
+                break 2;
 
-            };
+              };
+            }
           }
 
-          foreach($csplt as $wl) {
+          if ($configs["useWhiteList"] === "1") {
 
-            $tmp = strpos($wl, "()");
-            $wl = preg_replace("/[^a-zA-Z0-9,;:._ ]+/", "", $wl);
-            if (strpos($str, $wl) !== false && $wl !== null) { $match = true; $wlwithBracs = ( strpos($wl, "()") !== false ? true : false ); break 1; }
+            foreach($csplt as $wl) {
 
-          }
-
-          if ($opnBrac) {
-
-            if ($hasOpnBrac !== false) {
-
-              $this->checkRes = "Illegal syntax at line " . $acc . ", reads:a " . $str;
-              return $this->checkRes;
-              break;
+              $tmp = strpos($wl, "()");
+              $wl = preg_replace("/[^a-zA-Z0-9,;:._ ]+/", "", $wl);
+              if (strpos($str, $wl) !== false && $wl !== null) { $match = true; $wlwithBracs = ( strpos($wl, "()") !== false ? true : false ); break 1; }
 
             }
 
-            if ($hasClsBrac !== false) {
+            if ($opnBrac) {
 
-              $opnBrac = false;
+              if ($hasOpnBrac !== false) {
 
-            }
-
-            if ($match !== false) {
-
-              $this->checkRes = "Illegal syntax at line " . $acc . ", reads:b " . $str;
-              break;
-            }
-
-          } else if ($match) {
-
-            if ($hasOpnBrac === false && $wlwithBracs ) {
-
-              var_dump($str);
-              var_dump();
-              $this->checkRes = "Illegal syntax at line " . $acc . ", reads:c " . $str;
-              break;
-
-            } else {
-
-              if ($hasClsBrac === false && $hasOpnBrac ) {
-
-                $opnBrac = true;
-                continue;
+                $this->checkRes = "Illegal syntax at line " . $acc . ", reads:a " . $str;
+                return $this->checkRes;
+                break;
 
               }
+
+              if ($hasClsBrac !== false) {
+
+                $opnBrac = false;
+
+              }
+
+              if ($match !== false) {
+
+                $this->checkRes = "Illegal syntax at line " . $acc . ", reads:b " . $str;
+                break;
+              }
+
+            } else if ($match) {
+
+              if ($hasOpnBrac === false && $wlwithBracs ) {
+
+                var_dump($str);
+                var_dump();
+                $this->checkRes = "Illegal syntax at line " . $acc . ", reads:c " . $str;
+                break;
+
+              } else {
+
+                if ($hasClsBrac === false && $hasOpnBrac ) {
+
+                  $opnBrac = true;
+                  continue;
+
+                }
+              }
+            } else {
+              $this->checkRes = "Illegal syntax at line " . $acc . ", reads:d " . $str;
+              break;
+
             }
-          } else {
-            $this->checkRes = "Illegal syntax at line " . $acc . ", reads:d " . $str;
-            break;
 
           }
+
         }
       }
 
