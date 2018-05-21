@@ -262,7 +262,7 @@
 
 			//increment user's daily requests
 	    $stmt = $conn_sql->stmt_init();
-	    $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 0 WHERE user_id=?");
+	    $stmt = $conn_sql->prepare("UPDATE Users SET current_requests = current_requests + 1 WHERE user_id=?");
 	    $stmt->bind_param("s", $userID);
 
 			//insert their latest request
