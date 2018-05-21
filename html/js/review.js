@@ -75,6 +75,9 @@ function removeReq(entry) {
       $("#entryTitle" + entry).remove()
       $("#newTable" + entry).remove();
       $("#removeButton" + entry).remove();
+      $(".commentRemove" + entry).remove();
+      $("#startRemove" + entry).remove();
+      $("#compRemove" + entry).remove();
     },
     failure: function(data) {
       console.log("NOPE");
@@ -106,10 +109,10 @@ function sendReq() {
 
       if (subRes.length > 0) {
         if (subRes[0].complete == 0) {
-          $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Current Requests</h1><hr>");
+          $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Current Requests</h1>");
           completedFlag = false;
         } else {
-          $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Your Historical Requests</h1><hr>");
+          $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px;'>Your Historical Requests</h1>");
         }
 
         for (i = 0; i < subRes.length; i++) {
@@ -120,9 +123,9 @@ function sendReq() {
 
           if (subRes[i].complete == 1) {
             var extension = (subRes[i].extension !== null ? subRes[i].extension : ".zip");
-            var fstLine = '<hr><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - ' + date + '</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '</a>';
+            var fstLine = '<hr class="commentRemove' + i + '"><h3 id="entryTitle' + i + '">' + subRes[i].original_name + ' - ' + date + '</h2><br><a href="https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '">https://pdb2movie.warwick.ac.uk/download/' + subRes[i].filename + extension + '</a>';
           } else {
-            var fstLine = '<hr><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - ' + date + ' </h2><button type="button" class="btn btn-dark" id="removeButton' + i + '" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i + '" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
+            var fstLine = '<hr  class="commentRemove' + i + '"><h3 id="entryTitle' + i + '" style="position: inherit">' + subRes[i].original_name + ' - ' + date + ' </h2><button type="button" class="btn btn-dark" id="removeButton' + i + '" onClick="removeReq(' + i + ')" style="float: right;">Remove</button><img id="loading_gif' + i + '" height="15" width="15" style="float: right;" src="../img/loading.gif" />';
           }
 
           $("#response-tables").append("" +
@@ -163,8 +166,8 @@ function sendReq() {
             '</tbody>' +
             '</table>');
 
-          $("#response-tables").append("<br><p>Comment: " +
-            "<blockquote class='blockquote' style='margin-left:20px'>" +
+          $("#response-tables").append("<br class='commentRemove" + i + "'><p class='commentRemove" + i + "'>Comment: " +
+            "<blockquote class='blockquote commentRemove" + i + "' style='margin-left:20px'>" +
             "\"" + (subRes[i].comment === "NO_COMMENT" ? "" : subRes[i].comment) + "\"" +
             "</blockquote><br>");
 
@@ -172,13 +175,13 @@ function sendReq() {
             var dateStart = new Date(subRes[i].time_start * 1000).toLocaleString('en-GB', {
               timeZone: 'UTC'
             });
-            $("#response-tables").append("<p>Request began processing at: " + dateStart + "</p>");
+            $("#response-tables").append("<p id='startRemove" + i + "'>Request began processing at: " + dateStart + "</p>");
           }
           if (subRes[i].time_comp !== 0) {
             var dateComp = new Date(subRes[i].time_comp * 1000).toLocaleString('en-GB', {
               timeZone: 'UTC'
             });
-            $("#response-tables").append("<p>Request finished processing at: " + dateComp + "</p>");
+            $("#response-tables").append("<p id='compRemove" + i + "'>Request finished processing at: " + dateComp + "</p>");
           }
 
           //console.log(subRes[i]);
@@ -187,7 +190,7 @@ function sendReq() {
             if (subRes[i + 1].complete == 1) {
 
               completedFlag = true;
-              $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px; margin-top:40px;'>Your Historical Requests</h1><hr>");
+              $("#response-tables").append("<br><h1 class='bubble' style='background-color: #EEE; border-color:#EEE; padding-left: 20px;padding-top:20px; padding-bottom: 20px; margin-top:40px;'>Your Historical Requests</h1>");
 
             }
           }

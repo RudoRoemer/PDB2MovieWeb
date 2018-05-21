@@ -1,0 +1,2 @@
+cmd.movie.produce
+cmd.quit

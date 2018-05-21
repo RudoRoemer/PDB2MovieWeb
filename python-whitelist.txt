@@ -1,0 +1,20 @@
+from pymol import cmd
+from glob import glob
+set_view()
+hide()
+select()
+color()
+show()
+bg_color()
+print
+movie.add_state_sweep()
+cmd.hide()
+cmd.select()
+cmd.color()
+cmd.show()
+cmd.bg_color()
+cmd.set_view()
+cmd.movie.add_state_sweep()
+for
+.sort()
+glob()
