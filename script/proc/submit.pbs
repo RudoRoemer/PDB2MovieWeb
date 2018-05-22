@@ -2,6 +2,8 @@
 #PBS -V
 #PBS -k oe
 #PBS -j oe
+#PBS -e ./log
+#PBS -o ./log
 #PBS -N ${NAME}
 
 name=${NAME}
