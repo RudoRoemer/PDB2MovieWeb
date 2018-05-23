@@ -20,3 +20,12 @@ http://dx.doi.org/doi:10.1088/1478-3975/9/1/016008
 R. A. R&ouml;mer, S. A. Wells, J. E. Jimenez-Roldan, M. Bhattacharyya, S. Vishweshwara and R. B. Freedman
 Proteins: Structure, Function and Bioinformatics 84, 1776-1785 (2016)
 http://dx.doi.org/10.1002/prot.25159
+
+Updates:
+
+- V1.2.0 23052018: 
+
+Stable build of PDB2Movie based on PyMOL as video renders and using SC RTP pre-2018 desktop.
+
+    * compute runs are still on "dovah" dedicated test queue, not yet full production
+    * a fixed number of cores (16) is still used regardless of actual job size
