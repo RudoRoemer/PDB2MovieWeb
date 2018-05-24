@@ -10,14 +10,14 @@ If you wish to use the service more often, please get in touch as explained on o
 If you use the results of this calculation in a commercial and/or academic output (such as a patent or a paper), please
 remember to acknowledge our two papers
 
-[A] "Rapid simulation of protein motion: merging flexibility, rigidity and normal mode analyses"
-E. Jimenez-Roldan, R. Freedman, R. A. R&ouml;mer, S. A. Wells
-Physical Biology 9, 016008-12 (2012) 
+[A] "Rapid simulation of protein motion: merging flexibility, rigidity and normal mode analyses", 
+E. Jimenez-Roldan, R. Freedman, R. A. R&ouml;mer, S. A. Wells, 
+Physical Biology 9, 016008-12 (2012), 
 http://dx.doi.org/doi:10.1088/1478-3975/9/1/016008
 
-[B] "The dynamics and flexibility of protein disulphide-isomerase (PDI): predictions of experimentally-observed domain motions"
-R. A. R&ouml;mer, S. A. Wells, J. E. Jimenez-Roldan, M. Bhattacharyya, S. Vishweshwara and R. B. Freedman
-Proteins: Structure, Function and Bioinformatics 84, 1776-1785 (2016)
+[B] "The dynamics and flexibility of protein disulphide-isomerase (PDI): predictions of experimentally-observed domain motions", 
+R. A. R&ouml;mer, S. A. Wells, J. E. Jimenez-Roldan, M. Bhattacharyya, S. Vishweshwara and R. B. Freedman, 
+Proteins: Structure, Function and Bioinformatics 84, 1776-1785 (2016), 
 http://dx.doi.org/10.1002/prot.25159
 
 Updates:
