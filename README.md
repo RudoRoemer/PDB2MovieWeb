@@ -3,7 +3,7 @@ Web-based front- and backend for PDB2Movie script
 
 http://pdb2movie.warwick.ac.uk
 
-This service uses low priority compute cycles at the Scientific Computing Research Technology Platform https://warwick.ac.uk/research/rtp/sc of the University of Warwick. The service is provided for free at the moment based on a low volume of such requests. 
+This service uses low priority compute cycles at the Scientific Computing Research Technology Platform (https://warwick.ac.uk/research/rtp/sc) of the University of Warwick. The service is provided for free at the moment based on a low volume of such requests. 
 
 If you wish to use the service more often, please get in touch as explained on our PDB2Movie web pages.
 
