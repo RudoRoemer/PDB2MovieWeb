@@ -1,6 +1,6 @@
 Your request for a PDB2Movie calculation has been accepted and is being processed by our queueing system. Your submitted parameters are appended below. You will receive another email notification once the job starts execution.
 
-Please note that this service uses low priority compute cycles at the Scientific Computing Research Technology Platform 
+Please note that this service uses low priority compute cycles of the Scientific Computing Research Technology Platform 
 at the University of Warwick. The service is provided for free at the moment based on a low volume of such requests. 
 
 If you wish to use the service more often, please get in touch as explained on our PDB2Movie web pages.
