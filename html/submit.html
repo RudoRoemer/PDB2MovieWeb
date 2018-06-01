@@ -21,6 +21,10 @@
     <div id="text">
       Web-based front- and backend for PDB2Movie scripts
     </div>
+    <div>
+      <br>
+      <p id="processing-status" style="color: grey"> loading...
+    </div>
   </div>
   <nav class="navbar navbar-expand-sm bg-light navbar-light">
     <ul class="navbar-nav">
@@ -157,7 +161,7 @@
         <h4>Output preferences</h4>
 
         <div class="form-group">
-          <li>Upload (optional) PYMol video formatting statements (.py file)
+          <li><div id="pyFileText">Upload (optional) PYMol video formatting statements (.py file)</div>
             <input type="file" name="pyFile" id="pyFile" accept=".py" style="display: block"></li>
         </div>
 
@@ -332,17 +336,15 @@
         <input style="margin-top: 10px;" type="submit" value="Process" name="submit" id="process" disabled="true">
         <img id="loading_gif" height="15" width="15" src="../img/loading.gif" />
 
-<div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
+      	<h4 style="margin-top: 20px; padding-bottom: 2px;">Privacy statement</h4>
+        <p>This form is anonymous but collects your submitted email address.
+      	We keep a list of such email addresses to judge the impact and usage of this service.
+      	We might every few years contact you on this email to ask for feedback (in terms of REF preperation).
+      	No data which personally identifies you is collected by the form.
+      	The scientific data you provide is used solely to simulate the dynamics and flexibility of proteins as requested by you.</p>
 
-	<h4>Privacy statement</h4>
-        <p>This form is anonymous but collects your submitted email address. 
-	We keep a list of such email addresses to judge the impact and usage of this service. 
-	We might every few years contact you on this email to ask for feedback (in terms of REF preperation).
-	No data which personally identifies you is collected by the form. 
-	The scientific data you provide is used solely to simulate the dynamics and flexibility of proteins as requested by you.</p>
-
-</div>
       </form>
+
 
     </div>
   </div>
@@ -351,5 +353,5 @@
 
 <script src="js/parser.js"></script>
 <script src="js/version.js"></script>
-
+<script src="js/processing-status.js"></script>
 </html>
