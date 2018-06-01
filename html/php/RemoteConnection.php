@@ -35,7 +35,7 @@
 
       //does it match the configs for the current fingerprint (stops man-in-middle attacks)
     	if (strcmp($configs['remoteHostFingerPrint'], $fingerprint) !== 0) {
-    		$this->res = '{"status": "failure", "title": "Seomthing went wrong", "text": "Fingerprint did not match processing server\'s."}';
+    		$this->res = '{"status": "failure", "title": "Seomthing went wrong", "text": "Fingerprint did not match processing server\'s. Fingerprint supplied: '+$fingerprint+'"}';
         return $this->res;
       }
 
