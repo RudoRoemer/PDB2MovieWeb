@@ -1,5 +1,5 @@
 #!/bin/bash
-log=/storage/disqs/phsbqz/TEST.txt
+log=/storage/disqs/$USER/TEST.txt
 
 for file in ./pdb_des/* ; do
 	if [[ $(find "$file" -mtime +7 -print) ]]; then
