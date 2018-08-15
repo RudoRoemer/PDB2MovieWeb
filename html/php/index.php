@@ -8,7 +8,7 @@
 
 	//Essentials are check before anything is processed
 	if (!$configs = parse_ini_file("../../config.conf")) {
-		endOp(jsonFormat("Failure","Cnfiguration error", "Could not load config file on web server."));
+		endOp(jsonFormat("Failure","Configuration error", "Could not load config file on web server."));
 	}
 
 	include "FileChecker.php";
@@ -131,7 +131,7 @@
 	//$rawname = rtrim($name, '.pdb');
 	//send files to processing side
 	if (!(ssh2_scp_send($conn_ssh->res, $newLoc, $remoteScripts . "/pdb_tmp/" . $name ))) {
-		endOp(jsonFormat("Failure", "Something has gone wrong","Error uploading pdb file to processing server."));
+		endOp(jsonFormat("Failure", "Something has gone wrong","Error uploading PDB file to processing server."));
 	}
 	if ($pyFileUsed) {
 		if (!(ssh2_scp_send($conn_ssh->res, $newLocPyth, $remoteScripts . "/pdb_tmp/" . $pyName ))) {
