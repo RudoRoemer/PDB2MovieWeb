@@ -39,7 +39,7 @@
         return $this->res;
       }
 
-      //send public key, use remote public ket with local pricate key on the connection
+      //send public key, use remote public key with local pricate key on the connection
     	$auth = ssh2_auth_pubkey_file($conn_ssh, $configs['remoteUser'], $configs['sshPublic'], $configs['sshPrivate']);
     	if (!$auth) {
         $this->res = '{"status": "failure", "title": "Something went wrong", "text": "Could not authenticate processing server."}';
