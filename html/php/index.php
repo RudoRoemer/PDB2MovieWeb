@@ -28,7 +28,7 @@
 	//authenticate .pdb file
  	$pdbFile = new PdbChecker($sha1Final);
 	if ($pdbFile->didItPass() !== "Success"){
-    endOp(jsonFormat("Failure", "Somethin has gone wrong", "The PDB file send did not pass authentication " . $pdbFile->didItPass())); //. $pdbFile->didItPass()));
+    endOp(jsonFormat("Failure", "Something has gone wrong", "The PDB file send did not pass authentication " . $pdbFile->didItPass())); //. $pdbFile->didItPass()));
 	}
 	//location of the file for when it needs to be moved to processing server
 	$newLoc = $pdbFile->getTmpLocation();
