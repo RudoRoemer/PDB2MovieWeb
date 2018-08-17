@@ -318,24 +318,25 @@
                     endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
                 } else {
 					//format email args
-					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s '%s'",
-													$origName,
-													$pyToPass,
-													$res,
-													$combi,
-													$multiple,
-													$waters,
-													$threed,
-													$confs,
-													$freq,
-													$step,
-													$dstep,
-													$molList,
-													$modList,
-													$cutList,
-													date('d M y h:m:s A'),
-													$sCode,
-													$comment
+					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s '%s' '%s'",
+                                    $origName,
+                                    $pyToPass,
+                                    $res,
+                                    $combi,
+                                    $multiple,
+                                    $waters,
+                                    $threed,
+                                    $confs,
+                                    $freq,
+                                    $step,
+                                    $dstep,
+                                    $molList,
+                                    $modList,
+                                    $cutList,
+                                    date('d M y h:m:s A'),
+                                    $sCode,
+                                    $comment,
+                                    $qsub_cmd
 					);
 					//send first email to show the process has been accepted.
 					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
@@ -348,7 +349,7 @@
             }
 
 		} else { 
-            endOp(jsonFormat("Failure", "Something has gone wrong", "This requests is currently being processed. Please wait for this to be completed before requesting it again.")); 
+            endOp(jsonFormat("Failure", "Something has gone wrong", "This request is currently being processed. Please wait for this to be completed before requesting it again.")); 
         }
 
 	} else {
