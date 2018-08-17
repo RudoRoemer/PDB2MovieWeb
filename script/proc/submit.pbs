@@ -11,7 +11,7 @@
 ##PBS -j oe
 ##PBS -e ./log
 ##PBS -o ./log
-#SBATCH --output=./log
+#SBATCH --output=./log/${NAME}.log
 
 ##PBS -N ${NAME}
 #SBATCH --job-name=${NAME}
