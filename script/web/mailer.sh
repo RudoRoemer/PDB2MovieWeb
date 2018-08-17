@@ -20,6 +20,7 @@ do
   echo $i
 done
 echo "-----"
+echo "date submitted: " ${15}
 echo "file: " $1
 echo "python file used: " $2
 echo "resolution: " $3
@@ -34,10 +35,9 @@ echo "dstep: " ${11}
 echo "keep list: " ${12}
 echo "modes: " ${13}
 echo "cutoffs: " ${14}
-echo "date submitted: " ${15}
+echo "Your comments: " ${17}
 echo "-----"
-echo "Your User Reference Code: " ${16};
-echo "Your Comments: " ${17}
+echo "Your user reference code: " ${16} "; for use at https://pdb2movie.warwick.ac.uk/review.html"
 echo "-----"
 echo "submission command: " ${18}
 if [ $doc == "complete.txt" ]; then
