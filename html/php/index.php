@@ -8,7 +8,7 @@
 
     //Essentials are check before anything is processed
     if (!$configs = parse_ini_file("../../config.conf")) {
-		endOp(jsonFormat("Failure","Configuration error", "Could not load config file on web server."));
+		endOp(jsonFormat("Failure","Configuration error", "Could not load config file onto web server."));
 	}
 
     include "FileChecker.php";
@@ -285,7 +285,7 @@
 	if ($fetchUser["blacklisted"]) { 
         endOp(jsonFormat("Failure", "Something has gone wrong.", "You have been blacklisted.")); }
 	if ($fetchFav["blacklisted"]) { 
-        endOp(jsonFormat("Failure", "Something has gone wrong.", "We do not allow the use of email address.")); }
+        endOp(jsonFormat("Failure", "Something has gone wrong.", "We do not allow the use of this email address.")); }
 
 	if(is_numeric($maxReqsFav)) { $maxReqs = max($maxReqs, $maxReqsFav); }
 
@@ -317,7 +317,7 @@
 			if ($stmt->execute() && $stmt2->execute()) {
 				//submit to the processing server
 				if (!(ssh2_exec($conn_ssh->res, $qsub_cmd))) {
-                    endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please email s.moffat.1@warwick.ac.uk"));
+                    endOp(jsonFormat("Failure", "Something has gone wrong","There was an error with your process. If you get this message, please get in touch with the PDB2MovieWeb developers."));
                 } else {
 					//format email args
 					$args = sprintf("%s %s '%s' %s %s %s %s %s %s %s %s '%s' '%s' '%s' '%s' %s '%s' '%s'",
@@ -351,11 +351,11 @@
             }
 
 		} else { 
-            endOp(jsonFormat("Failure", "Something has gone wrong", "This request is currently being processed. Please wait for this to be completed before requesting it again.")); 
+            endOp(jsonFormat("Failure", "Something has gone wrong", "This identical request is already being processed. Please wait for it to be completed before requesting it again.")); 
         }
 
 	} else {
-		$fff = jsonFormat("Failure", "Something has gone wrong","You have Reached your daily limit of " . $currReqs . "/" . $maxReqs . ". This will be reset at 00:00:00 GMT.");
+		$fff = jsonFormat("Failure", "Something has gone wrong","You have reached your daily limit of " . $currReqs . "/" . $maxReqs . ". This will be reset at 00:00:00 GMT.");
 		endOp($fff);
 	}
 
