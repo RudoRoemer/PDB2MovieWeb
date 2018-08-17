@@ -34,10 +34,11 @@
     	$fingerprint = ssh2_fingerprint($conn_ssh, SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX);
 
       //does it match the configs for the current fingerprint (stops man-in-middle attacks)
+	/*
     	if (strcmp($configs['remoteHostFingerPrint'], $fingerprint) !== 0) {
     		$this->res = '{"status": "failure", "title": "Something went wrong", "text": "Fingerprint did not match processing server\'s. Fingerprint supplied: '+$fingerprint+'"}';
         return $this->res;
-      }
+      }*/
 
       //send public key, use remote public key with local pricate key on the connection
     	$auth = ssh2_auth_pubkey_file($conn_ssh, $configs['remoteUser'], $configs['sshPublic'], $configs['sshPrivate']);

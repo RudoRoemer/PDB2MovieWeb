@@ -169,9 +169,6 @@ scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/downloa
 
 if [ $? -eq 0 ]; then
 
-	rm $DEST/$purename$SUFFIX;
-	rm -r $TMP/$purename;
-
 	if [ $webServerLoc == "advid.lnx.warwick.ac.uk" ]; then
 		URL="pdb2movie.warwick.ac.uk"
 	else
@@ -185,3 +182,5 @@ else
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Error' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 
 fi
+
+rm $DEST/$purename$SUFFIX;                                                                                                                                   rm -r $TMP/$purename*;                                                                                                                                       rm -rf $TMP/$purename/
