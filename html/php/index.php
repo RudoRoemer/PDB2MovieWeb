@@ -233,8 +233,10 @@
 	// $remoteCluster,
 	// $remoteScripts);
 
-	$qsub_cmd = sprintf('TOCLEAN="%s"; CLEAN=${TOCLEAN//[^a-zA-Z0-9 ,.!_]/};CLEAN=`echo -n $CLEAN | tr A-Z a-z`; cd %s && sbatch --job-name=%s --export=LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME="%s",TIME="%s",COMMENT="$CLEAN",PYNAME="%s" --partition=%s %s/submit.pbs',
+	$qsub_cmd = sprintf('TOCLEAN="%s"; CLEAN=${TOCLEAN//[^a-zA-Z0-9 ,.!_]/};CLEAN=`echo -n $CLEAN | tr A-Z a-z`; cd %s && sbatch --job-name=%s --output=%s/log/%s.log --export=LOC="%s",RETDIR="%s",NAME="%s",RES="%s",ISUNIX="%s",WATERS="%s",COMBI="%s",MULTIPLE="%s",THREED="%s",FILEKEEP="%s",CONFS="%s",FREQ="%s",STEP="%s",DSTEP="%s",EMAIL="%s",MOLLIST="%s",MODLIST="%s",CUTLIST="%s",CODE="%s",LOCALHOST="%s",ORIGNAME="%s",TIME="%s",COMMENT="$CLEAN",PYNAME="%s" --partition=%s %s/submit.pbs',
 	$comment,
+	$remoteScripts,
+	$name,
 	$remoteScripts,
 	$name,
 	$remoteScripts,
