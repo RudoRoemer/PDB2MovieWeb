@@ -185,4 +185,6 @@ else
 
 fi
 
-rm $DEST/$purename$SUFFIX;                                                                                                                                   rm -r $TMP/$purename*;                                                                                                                                       rm -rf $TMP/$purename/
+#rm $DEST/$purename$SUFFIX;
+#rm -r $TMP/$purename*;    
+#rm -rf $TMP/$purename/
