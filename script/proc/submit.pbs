@@ -1,10 +1,20 @@
-#PBS -l nodes=1:ppn=16,pmem=2000mb,walltime=04:00:00
-#PBS -V
-#PBS -k oe
-#PBS -j oe
-#PBS -e ./log
-#PBS -o ./log
-#PBS -N ${NAME}
+#!/bin/bash
+
+##PBS -l nodes=1:ppn=16,pmem=2000mb,walltime=04:00:00
+#SBATCH --ntask=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=2000
+#SBATCH --time=04:00:00
+
+##PBS -V
+##PBS -k oe
+##PBS -j oe
+##PBS -e ./log
+##PBS -o ./log
+#SBATCH --output=./log/${NAME}.log
+
+##PBS -N ${NAME}
+#SBATCH --job-name=${NAME}
 
 name=${NAME}
 oldFileName=${ORIGNAME}
@@ -105,6 +115,7 @@ echo "PYNAME="$pyName
 echo "ARGS="$args
 
 ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
+echo $FREEMOL
 eval $com
 
 newFile=$TMP/$purename/$oldFileName-params.txt
@@ -161,9 +172,6 @@ scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/downloa
 
 if [ $? -eq 0 ]; then
 
-	rm $DEST/$purename$SUFFIX;
-	rm -r $TMP/$purename;
-
 	if [ $webServerLoc == "advid.lnx.warwick.ac.uk" ]; then
 		URL="pdb2movie.warwick.ac.uk"
 	else
@@ -177,3 +185,7 @@ else
 	ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Error' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
 
 fi
+
+#rm $DEST/$purename$SUFFIX;
+#rm -r $TMP/$purename*;    
+#rm -rf $TMP/$purename/

@@ -1,6 +1,6 @@
 var renderer
 
-$("#main").load("test.html")
+//$("#main").load("test.html")
 
 $.ajax({
   url:"php/rendererInfo.php",
@@ -48,3 +48,4 @@ function fillUploadAttr(text, exts) {
   $("#pyFileText").append(text);
   $("#pyFile").attr("accept", exts);
 }
+
