@@ -1,89 +1,89 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <meta charset="utf-8" />
-  <title></title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/general.css">
-</head>
-<div>
-  <div class="header-image">
-  </div>
-  <div class="jumbotron">
-    <div id="header">
-      PDB2Movie (c) 2018
-    </div>
-    <a href="" id="version-tag"></a>
-    <div id="text">
-      Web-based front- and backend for PDB2Movie scripts
-    </div>
+    <head>
+	<meta charset="utf-8" />
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/general.css">
+    </head>
     <div>
-      <br>
-      <p id="processing-status" style="color: grey"> loading...
-    </div>
-  </div>
-  <nav class="navbar navbar-expand-sm bg-light navbar-light">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="submit.html">Submit Job</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="review.html">Review Job</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="examples.html">Examples</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="about.html">About</a>
-      </li>
-      <!--<li class="nav-item">
-	    <a class="nav-link" href="terms-of-service.html">Terms of Service</a>
-	</li>-->
-    </ul>
-  </nav>
-  <div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
+	<div class="header-image">
+	</div>
+	<div class="jumbotron">
+	    <div id="header">
+		PDB2Movie
+	    </div>
+	    <a href="" id="version-tag"></a>
+	    <div id="text">
+		Web-based front- and backend for PDB2Movie scripts (c) 2018
+	    </div>
+	    <div>
+		<br>
+		<p id="processing-status" style="color: grey"> loading...
+	    </div>
+	</div>
+	<nav class="navbar navbar-expand-sm bg-light navbar-light">
+	    <ul class="navbar-nav">
+		<li class="nav-item">
+		    <a class="nav-link" href="index.html">Home</a>
+		</li>
+		<li class="nav-item">
+		    <a class="nav-link" href="submit.html">Submit Job</a>
+		</li>
+		<li class="nav-item">
+		    <a class="nav-link" href="review.html">Review Job</a>
+		</li>
+		<li class="nav-item active">
+		    <a class="nav-link" href="examples.html">Examples</a>
+		</li>
+		<li class="nav-item">
+		    <a class="nav-link" href="about.html">About</a>
+		</li>
+		<!--<li class="nav-item">
+		     <a class="nav-link" href="terms-of-service.html">Terms of Service</a>
+		     </li>-->
+	    </ul>
+	</nav>
+	<div id="main" class="container" style="margin-top: 20px; padding-bottom: 2px;">
 
-    <h2 style="padding-top: 10px;">Examples</h2>
+	    <h2 style="padding-top: 10px;">Examples</h2>
 
 
-<TABLE align="center" bordercolor="#c0c0c0" bgcolor="#ddddff" border="1" cellspacing="3" cellpadding="5">
-  <tbody>
-    <tr>
-      <th width="20%" bgcolor="#e1e1e1">Protein</th>
-      <th width="10%" bgcolor="#e1e1e1">.pdb file</th>
-      <th width="10%" bgcolor="#e1e1e1">.py file</th>
-      <th width="20%" bgcolor="#e1e1e1">input parameters</th>
-      <th width="30%" bgcolor="#e1e1e1">movies</th>
-      <th width="20%" bgcolor="#e1e1e1">conformer</th>
-      <th width="20%" bgcolor="#e1e1e1">image</th>
-    </tr>
-<tr>
-<td><A href="https://www.rcsb.org/structure/2B5E">Yeast Protein Disulfide Isomerase</a></td>
-<td><A href="examples/2B5E/2B5E_FH.pdb">2B5E_FH.pdb</a></td>
-<td><A href="examples/2B5E/2B5E.py">2B5E.py</a></td>
-<td><A href="examples/2B5E/2B5E_FH.pdb-params.txt">2B5E_FH.pdb-params.txt</a></td>
-<td>
-<A href="examples/2B5E/Run-2.0-mode07-combi.mpg">Run-2.0-mode07-combi.mpg</a><br>
-<A href="examples/2B5E/Run-2.0-mode07-pos.mpg">Run-2.0-mode07-pos.mpg</a><br>
-<A href="examples/2B5E/Run-2.0-mode07-neg.mpg">Run-2.0-mode07-neg.mpg</a><br>
-<A href="examples/2B5E/Run-2.0-mode08-combi.mpg">Run-2.0-mode08-combi.mpg</a><br>
-<A href="examples/2B5E/Run-2.0-mode08-pos.mpg">Run-2.0-mode08-pos.mpg</a><br>
-<A href="examples/2B5E/Run-2.0-mode08-neg.mpg">Run-2.0-mode08-neg.mpg</a><br>
-</td>
-<td><A href="./examples/2B5E/2B5E_conformers.zip">2B5E_conformers.zip</a></td>
-<td><A href="./examples/2B5E/2B5E.png"><img src="examples/2B5E/2B5E.png"
-					    alt="2B5E" style="width:150px" ></a></td>
-</tr>
-</tbody>
-</table>
+	    <TABLE align="center" bordercolor="#c0c0c0" bgcolor="#ddddff" border="1" cellspacing="3" cellpadding="5">
+		<tbody>
+		    <tr>
+			<th width="20%" bgcolor="#e1e1e1">Protein</th>
+			<th width="10%" bgcolor="#e1e1e1">.pdb file</th>
+			<th width="10%" bgcolor="#e1e1e1">.py file</th>
+			<th width="20%" bgcolor="#e1e1e1">input parameters</th>
+			<th width="30%" bgcolor="#e1e1e1">movies</th>
+			<th width="20%" bgcolor="#e1e1e1">conformer</th>
+			<th width="20%" bgcolor="#e1e1e1">image</th>
+		    </tr>
+		    <tr>
+			<td><A href="https://www.rcsb.org/structure/2B5E">Yeast Protein Disulfide Isomerase</a></td>
+			<td><A href="examples/2B5E/2B5E_FH.pdb">2B5E_FH.pdb</a></td>
+			<td><A href="examples/2B5E/2B5E.py">2B5E.py</a></td>
+			<td><A href="examples/2B5E/2B5E_FH.pdb-params.txt">2B5E_FH.pdb-params.txt</a></td>
+			<td>
+			    <A href="examples/2B5E/Run-2.0-mode07-combi.mpg">Run-2.0-mode07-combi.mpg</a><br>
+			    <A href="examples/2B5E/Run-2.0-mode07-pos.mpg">Run-2.0-mode07-pos.mpg</a><br>
+			    <A href="examples/2B5E/Run-2.0-mode07-neg.mpg">Run-2.0-mode07-neg.mpg</a><br>
+			    <A href="examples/2B5E/Run-2.0-mode08-combi.mpg">Run-2.0-mode08-combi.mpg</a><br>
+			    <A href="examples/2B5E/Run-2.0-mode08-pos.mpg">Run-2.0-mode08-pos.mpg</a><br>
+			    <A href="examples/2B5E/Run-2.0-mode08-neg.mpg">Run-2.0-mode08-neg.mpg</a><br>
+			</td>
+			<td><A href="./examples/2B5E/2B5E_conformers.zip">2B5E_conformers.zip</a></td>
+			<td><A href="./examples/2B5E/2B5E.png"><img src="examples/2B5E/2B5E.png"
+								    alt="2B5E" style="width:150px" ></a></td>
+		    </tr>
+		</tbody>
+	    </table>
 
-  </div>
+	</div>
   </body>
   <script src="js/version.js"></script>
   <script src="js/processing-status.js"></script>
