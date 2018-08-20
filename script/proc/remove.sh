@@ -6,7 +6,7 @@ processingUser="$USER"
 #wholeEntry=$(qstat -a | grep $processingUser | grep ${purename::16} | sed 's/\.moo.*/.moo/')
 #qdel $wholeEntry
 
-wholeEntry=$(squeue | grep $processingUser | grep ${purename::8} | sed 's/\.moo.*/.moo/')
+wholeEntry=$(squeue | grep $processingUser | grep ${purename::8} | sed 's/\.moo.*/.moo/' | cut -b 1-22)
 scancel $wholeEntry
 echo $?
 
