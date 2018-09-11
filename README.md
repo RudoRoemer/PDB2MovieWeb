@@ -22,7 +22,7 @@ http://dx.doi.org/10.1002/prot.25159
 
 Updates:
 
-- V1.2.10:
+- V1.2.1:
 
 Stable build of PDB2Movie based on PyMOL as video renderer and using SC RTP new 2018 desktop.
 
