@@ -10,6 +10,7 @@ wholeEntry=$(squeue | grep $processingUser | grep ${purename::8} | sed 's/\.moo.
 scancel $wholeEntry
 echo $?
 
+# remove calculation directory
 rm pdb_tmp/$purename*
 rm -r pdb_tmp/$purename/
 
