@@ -142,15 +142,18 @@ mv $TMP/$purename.py $TMP/$purename/
 cd $TMP/$purename;
 cp $purename.pdb $oldFileName
 cp $purename.py supplied_video_params.py
+cp $purename*.ps $oldFileName.ps
+
 if [ $isUnix -eq 1 ]; then
 
-	tar -cvf $purename.tar Run-*
+        tar -cvf $purename.tar Run-*
 	if [ $fileKeep -eq 1 ]; then
 		tar -rf $purename.tar Runs/ Modes/
 	fi
 	tar -rf $purename.tar $oldFileName
 	tar -rf $purename.tar supplied_video_params.py
 	tar -rf $purename.tar $oldFileName-params.txt
+	tar -rf $purename.tar $oldFileName.ps
 	gzip $purename.tar
 	mv $purename.tar.gz $DEST/ ;
 	SUFFIX='.tar.gz'
@@ -158,9 +161,9 @@ if [ $isUnix -eq 1 ]; then
 else
 
 	if [ $fileKeep -eq 1 ]; then
-		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt
+		zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt $oldFileName.ps
 	else
-	  zip -9 -r $purename.zip Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt
+	  zip -9 -r $purename.zip Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt $oldFileName.ps
 	fi
 	mv $purename.zip $DEST/ ;
 	SUFFIX='.zip'
