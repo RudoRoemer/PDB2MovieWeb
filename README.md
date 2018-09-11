@@ -22,9 +22,16 @@ http://dx.doi.org/10.1002/prot.25159
 
 Updates:
 
+- V1.2.10:
+
+Stable build of PDB2Movie based on PyMOL as video renderer and using SC RTP new 2018 desktop.
+
+    * compute runs are still on "dovah" dedicated test queue, not yet full production
+    * a fixed number of cores (16) is still used regardless of actual job size
+
 - V1.2.0 23052018: 
 
-Stable build of PDB2Movie based on PyMOL as video renders and using SC RTP pre-2018 desktop.
+Stable build of PDB2Movie based on PyMOL as video renderer and using SC RTP pre-2018 desktop.
 
     * compute runs are still on "dovah" dedicated test queue, not yet full production
     * a fixed number of cores (16) is still used regardless of actual job size
