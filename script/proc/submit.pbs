@@ -124,6 +124,8 @@ ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStar
 echo $FREEMOL
 
 # run main command
+echo $TMP/$purename/$purename_command.txt
+echo $com
 echo $com >$TMP/$purename/$purename_command.txt
 eval $com
 
