@@ -124,9 +124,7 @@ ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStar
 echo $FREEMOL
 
 # run main command
-echo $TMP/$purename/$purename_command.txt
-echo $com
-echo $com >$TMP/$purename/$purename_command.txt
+echo "executing:" $com
 eval $com
 
 # create a file with all parameters to sent back to user with computed job output
