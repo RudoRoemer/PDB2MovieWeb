@@ -134,7 +134,7 @@ echo "PYNAME="$pyName
 echo "ARGS="$args
 
 echo "----------------------------------------------------"
-echo "pdb2movieWEB: 1st email to acknowledge receipt of compute request"
+echo "pdb2movieWEB: 2nd email to acknowledge execution of compute request"
 echo "----------------------------------------------------"
 ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
 echo $FREEMOL
