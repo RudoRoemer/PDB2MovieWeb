@@ -244,6 +244,10 @@ else
     
 fi
 
+echo "----------------------------------------------------"
+echo "pdb2movieWEB: all done, hopefully a success"
+echo "----------------------------------------------------"
+
 #rm $DEST/$purename$SUFFIX;
 #rm -r $TMP/$purename*;    
 #rm -rf $TMP/$purename/
