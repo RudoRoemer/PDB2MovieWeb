@@ -141,7 +141,7 @@ echo $FREEMOL
 
 echo "----------------------------------------------------"
 echo "pdb2movieWEB: run main pdb2movie command"
-echo "pdb2movieWEB: $com
+echo "pdb2movieWEB:" $com
 echo "----------------------------------------------------"
 eval $com
 
