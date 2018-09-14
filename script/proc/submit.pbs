@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set the queueing system commands
+echo "pdb2movieWEB: setingt the queueing system commands"
 
 # current 2018- SC-RTP SLURM system
 #SBATCH --ntask=1
@@ -19,7 +19,8 @@
 ##PBS -o ./log
 ##PBS -N ${NAME}
 
-# compute run parameters
+echo "pdb2movieWEB: take run parameters from web interface"
+
 name=${NAME}
 oldFileName=${ORIGNAME}
 code=${CODE}
@@ -51,7 +52,7 @@ purename=$(sed 's/.\{4\}$//' <<< "$name")
 webServerUser=pdb2movie
 webServerLoc=${LOCALHOST}
 
-#if values are empty or false booleans, do not include in command line
+echo "pdb2movieWEB: if values are empty or false booleans, do not include in command line"
 if [ $waters -eq 1 ] ; then
 	sWaters="--waters "
 fi
@@ -89,10 +90,13 @@ if [ -n "$pyName" ]; then
 	sPyName="--video $TMP/$pyName "
 fi
 
+echo "pdb2movieWEB: construct pdb2movie command line"
+
 com="python3 $EXECSRC/pdb2movie.py $TMP/$name --res $res $sWaters $sCombi $sMulti $sConfs $sThreed $sCombi $sFreq $sStep $sDStep $sModList $sMolList $sCutList $sPyName"
 args="$oldFileName $pyTrue '$res' $waters $combi $multiple $threed $confs $freq $step $dstep '$molList' '$modList' '$cutList' '$time' $code '$comment'"
 
-# write compute parameters to screen for easier debugging
+echo "pdb2movieWEB: write compute parameters to screen for easier debugging"
+
 echo "NAME="$name
 echo "RES="$res
 echo "WATERS="$waters
@@ -119,15 +123,16 @@ echo "COM="$com
 echo "PYNAME="$pyName
 echo "ARGS="$args
 
-# MAIL: 1st email to acknowledge receipt of compute request
+echo "pdb2movieWEB: 1st email to acknowledge receipt of compute request"
+
 ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; $REMOTESCRIPT/updateTimeStarted.sh $purename; $REMOTESCRIPT/mailer.sh $email 'pdb2movie: Request Proccessing Has Began' processing.txt NULL $args"
 echo $FREEMOL
 
-# run main command
-echo "executing:" $com
+echo "pdb2movieWEB: run main pdb2movie command"
+echo "pdb2movieWEB: $com
 eval $com
 
-# create a file with all parameters to sent back to user with computed job output
+echo "pdb2movieWEB: create a file with all parameters to sent back to user with computed job output"
 newFile=$TMP/$purename/$oldFileName-params.txt
 echo "NAME="$name"\n">>$newFile
 echo "RES="$res"\n">>$newFile
@@ -146,21 +151,21 @@ echo "MODLIST="$modList"\n">>$newFile
 echo "CUTLIST="$cutList"\n">>$newFile
 echo "COMMENT="$comment"\n">>$newFile
 
-# move some local output files into temporary directories
+echo "pdb2movieWEB: move some local output files into temporary directories"
 mv $TMP/$purename.pdb $TMP/$purename/
 mv $TMP/$purename.py $TMP/$purename/
 
-# copy computed output into files for download
+echo "pdb2movieWEB: copy computed output into files for download"
 cd $TMP/$purename;
 cp $purename.pdb $oldFileName
 cp $purename.py supplied_video_params.py
 cp $purename*.ps $oldFileName.ps
 
-# prepare compressed files for final download link
+echo "pdb2movieWEB: prepare compressed files for final download link"
 
 if [ $isUnix -eq 1 ]; then 
 
-    # create .tar.gz file for download
+    echo "pdb2movieWEB: create .tar.gz file for download"
     tar -cvf $purename.tar Run-*
     if [ $fileKeep -eq 1 ]; then
 	tar -rf $purename.tar Runs/ Modes/
@@ -175,7 +180,7 @@ if [ $isUnix -eq 1 ]; then
 
 else
 
-    # create .zip file for download
+    echo "pdb2movieWEB:  create .zip file for download"
     if [ $fileKeep -eq 1 ]; then
 	zip -9 -r $purename.zip Runs/* Modes/* Run-* $oldFileName supplied_video_params.py $oldFileName-params.txt $oldFileName.ps
     else
@@ -187,7 +192,7 @@ else
 fi
 cd -;
 
-# copy download file to download place on web server
+echo "pdb2movieWEB: copy download file to download place on web server"
 scp -v $DEST/$purename$SUFFIX $webServerUser@$webServerLoc:/var/www/html/download/
 
 if [ $? -eq 0 ]; then
@@ -200,11 +205,11 @@ if [ $? -eq 0 ]; then
 	URL=$webServerLoc
     fi
 
-    # MAIL: 3d email to send download link 
+    echo "pdb2movieWEB: 3d email to send download link"
     ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Complete' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
     
 else
-    # MAIL: ERROR mailing
+    echo "pdb2movieWEB: ERROR mailing"
     ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Error' error.txt NULL $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
     
 fi
