@@ -39,7 +39,7 @@ echo "Your comments: " ${17}
 echo "-----"
 echo "Your user reference code: " ${16} "; for use at https://pdb2movie.warwick.ac.uk/review.html"
 echo "-----"
-echo "submission command: " ${18}
+#echo "submission command: " ${18}
 if [ $doc == "complete.txt" ]; then
   echo "Download Link: https://"$extra
 fi
