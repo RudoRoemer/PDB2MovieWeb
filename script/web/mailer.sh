@@ -13,7 +13,7 @@ done
 echo $args
 (
 echo "subject: "$msg
-echo "from: no-reply@warwick.ac.uk"
+echo "from: no-reply@pdb2movie.warwick.ac.uk"
 mapfile -t toSend < email-texts/$doc
 for i in "${toSend[@]}"
 do
@@ -39,9 +39,9 @@ echo "Your comments: " ${17}
 echo "-----"
 echo "Your user reference code: " ${16} "; for use at https://pdb2movie.warwick.ac.uk/review.html"
 echo "-----"
-echo "submission command: " ${18}
+#echo "submission command: " ${18}
 if [ $doc == "complete.txt" ]; then
   echo "Download Link: https://"$extra
 fi
-)| /usr/sbin/sendmail -i -f "no-reply@warwick.ac.uk" -- $email
+)| /usr/sbin/sendmail -i -f "no-reply@pdb2movie.warwick.ac.uk" -- $email
 echo $?
