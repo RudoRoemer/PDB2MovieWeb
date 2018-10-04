@@ -260,7 +260,7 @@
 	$sCode,
 	$thisServer,
 	$origName,
-	date('d M y h:m:s A'),
+	date('d M y h:m:s H e'),
 	$pyName,
 	$remoteCluster,
 	$remoteScripts);
