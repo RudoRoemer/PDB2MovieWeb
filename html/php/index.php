@@ -335,7 +335,7 @@
                                     $molList,
                                     $modList,
                                     $cutList,
-                                    date('d M y h:m:s A'),
+                                    date('d M y h:m:s H e'),
                                     $sCode,
                                     $comment,
                                     $qsub_cmd
