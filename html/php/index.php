@@ -260,7 +260,7 @@
 	$sCode,
 	$thisServer,
 	$origName,
-	date('d M y h:m:s A'),
+	date('d M y h:m:s H e'),
 	$pyName,
 	$remoteCluster,
 	$remoteScripts);
@@ -335,13 +335,13 @@
                                     $molList,
                                     $modList,
                                     $cutList,
-                                    date('d M y h:m:s A'),
+                                    date('d M y h:m:s H e'),
                                     $sCode,
                                     $comment,
                                     $qsub_cmd
 					);
 					//send first email to show the process has been accepted.
-					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'PDB2Movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
+					shell_exec("cd " . $localScripts . "; ./mailer.sh " . $email . " 'pdb2movie: Request Accepted' accepted.txt NULL " . $args . "; cd -") ;
 					endOp(jsonFormat("Success", "Thank you for your submission", "" . ++$currReqs . "/" . $maxReqs . " of your daily requests."));
 
 				}

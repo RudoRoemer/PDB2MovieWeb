@@ -232,7 +232,7 @@ if [ $? -eq 0 ]; then
     fi
 
     echo "----------------------------------------------------"
-    echo "pdb2movieWEB: 3d email to send download link"
+    echo "pdb2movieWEB: 3rd email to send download link"
     echo "----------------------------------------------------"
     ssh $webServerUser@$webServerLoc "cd $REMOTESCRIPT; ./mailer.sh $email 'pdb2movie: Request Complete' complete.txt $URL/download/$purename$SUFFIX $args; $REMOTESCRIPT/updateFinishedTask.sh $purename"
     
