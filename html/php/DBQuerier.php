@@ -14,7 +14,7 @@ class DBQuerier
     }
 
     public function setStatement($stmt) {
-       $this->stmt = $this->conn->stmt_init();
+        $this->stmt = $this->conn->stmt_init();
 
     }
 
