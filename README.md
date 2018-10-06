@@ -22,6 +22,11 @@ http://dx.doi.org/10.1002/prot.25159
 
 Updates:
 
+- V1.2.2:
+
+    * PDB2MovieWEB now also returns the FIRST RCD plot (as .ps file).
+    * Otherwise, the new release mostly contains internal patches to prepare for the work on the VMD option.
+
 - V1.2.1:
 
 Stable build of PDB2Movie based on PyMOL as video renderer and using SC RTP new 2018 desktop.
