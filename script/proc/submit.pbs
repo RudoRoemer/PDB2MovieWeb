@@ -4,9 +4,9 @@ echo "----------------------------------------------------"
 echo "pdb2movieWEB: setting the queueing system commands"
 echo "----------------------------------------------------"
 # current 2018- SC-RTP SLURM system
-#SBATCH --ntask=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=2000
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem-per-cpu=2000
 #SBATCH --time=04:00:00
 #SBATCH --output=./log/${NAME}.log
 #SBATCH --job-name=${NAME}
